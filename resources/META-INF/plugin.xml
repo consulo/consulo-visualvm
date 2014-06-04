@@ -1,11 +1,8 @@
 <idea-plugin version="2">
-	<id>VisualVMLauncher</id>
+	<id>org.mustbe.consulo.visualvm</id>
 	<name>VisualVM Launcher</name>
-	<version>1.5.134.1007</version>
-
-	<vendor url="https://github.com/krasa/VisualVMLauncher" email="vojta.krasa@gmail.com">Vojtech
-		Krasa
-	</vendor>
+	<vendor email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
+	<depends>org.consulo.java</depends>
 
 	<description><![CDATA[
      Launches VisualVM from within IDEA. <br/>
@@ -13,43 +10,21 @@
      or button next to the console window of already started application. 
       ]]></description>
 
-	<change-notes><![CDATA[
-        <br>1.5.134 (2014-02-10)
-        <br>- API change
-        <br>- NPE fix
-        <br>1.4 (2013-11-09)
-        <br>- IJ 13 API change
-      	<br>...
-        <br>0.1 (2012-11-05)
-        <br>- Initial release
-      ]]>
-	</change-notes>
-
-	<!--<idea-version since-build="132.637" until-build="134.000"/>&ndash;&gt;-->
-	<idea-version since-build="134.1007"/>
-	
 	<application-components>
 		<component>
 			<implementation-class>krasa.visualvm.ApplicationSettingsComponent</implementation-class>
 		</component>
 	</application-components>
 
-	<project-components>
-		<!-- Add your project components here -->
-	</project-components>
-
-	<actions>
-		<!-- Add your actions here -->
-	</actions>
+	<extensions defaultExtensionNs="org.consulo.java">
+		<programPatcher implementation="krasa.visualvm.VisualVMJavaProgramPatcher"/>
+	</extensions>
 
 	<extensions defaultExtensionNs="com.intellij">
 		<executor implementation="krasa.visualvm.executor.RunVisualVMExecutor"/>
 		<programRunner implementation="krasa.visualvm.runner.RunVisualVMRunner"/>
 		<programRunner implementation="krasa.visualvm.runner.DebugVisualVMRunner"/>
 		<executor implementation="krasa.visualvm.executor.DebugVisualVMExecutor"/>
-		<java.programPatcher implementation="krasa.visualvm.VisualVMJavaProgramPatcher"/>
 		<consoleActionsPostProcessor implementation="krasa.visualvm.VisualVMConsoleActionsPostProcessor"/>
 	</extensions>
-
-
 </idea-plugin>

@@ -1,11 +1,12 @@
 package krasa.visualvm.runner;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.debugger.engine.DebuggerUtils;
 import com.intellij.debugger.impl.DebuggerManagerImpl;
 import com.intellij.debugger.impl.GenericDebuggerRunner;
 import com.intellij.debugger.settings.DebuggerSettings;
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
 import com.intellij.execution.configurations.JavaCommandLine;
 import com.intellij.execution.configurations.JavaParameters;
@@ -27,8 +28,6 @@ import krasa.visualvm.LogHelper;
 import krasa.visualvm.VisualVMContext;
 import krasa.visualvm.VisualVMHelper;
 import krasa.visualvm.executor.DebugVisualVMExecutor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DebugVisualVMRunner extends GenericDebuggerRunner {
 	private static final Logger log = Logger.getInstance(DebugVisualVMRunner.class.getName());
@@ -69,7 +68,7 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner {
 			throws ExecutionException {
 		LogHelper.print("#patch", this);
 		doPatch(javaParameters, settings);
-		runCustomPatchers(javaParameters, Executor.EXECUTOR_EXTENSION_NAME.findExtension(DefaultDebugExecutor.class), runProfile);
+		runCustomPatchers(javaParameters, DefaultDebugExecutor.getDebugExecutorInstance(), runProfile);
 	}
 
 	/*is called for tomcat, but not normal application*/
