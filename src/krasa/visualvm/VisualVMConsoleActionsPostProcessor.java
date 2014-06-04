@@ -10,12 +10,14 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.diagnostic.Logger;
 import krasa.visualvm.action.StartVisualVMConsoleAction;
 
-public class VisualVMConsoleActionsPostProcessor implements ConsoleActionsPostProcessor {
+public class VisualVMConsoleActionsPostProcessor implements ConsoleActionsPostProcessor
+{
 	private static final Logger log = Logger.getInstance(VisualVMConsoleActionsPostProcessor.class.getName());
 
 	@NotNull
 	@Override
-	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
+	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions)
+	{
 		VisualVMContext context = VisualVMContext.load();
 		ArrayList<AnAction> anActions = new ArrayList<AnAction>();
 		anActions.add(new StartVisualVMConsoleAction(context));

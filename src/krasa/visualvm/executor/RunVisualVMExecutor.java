@@ -1,61 +1,80 @@
 package krasa.visualvm.executor;
 
-import javax.swing.*;
-
-import krasa.visualvm.Resources;
+import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
-
 import com.intellij.execution.executors.DefaultRunExecutor;
+import krasa.visualvm.VisualVMIcons;
 
-public class RunVisualVMExecutor extends DefaultRunExecutor {
+public class RunVisualVMExecutor extends DefaultRunExecutor
+{
 
 	public static final String RUN_WITH_VISUAL_VM = "Run with VisualVM";
 	public static final String RUN_WITH_VISUAL_VM1 = "RunWithVisualVM";
 
+	@Override
 	@NotNull
-	public String getToolWindowId() {
+	public String getToolWindowId()
+	{
 		return getId();
 	}
 
-	public Icon getToolWindowIcon() {
+	@Override
+	public Icon getToolWindowIcon()
+	{
 		return getIcon();
 	}
 
+	@Override
 	@NotNull
-	public Icon getIcon() {
-		return Resources.RUN;
+	public Icon getIcon()
+	{
+		return VisualVMIcons.RUN;
 	}
 
-	public Icon getDisabledIcon() {
+	@Override
+	public Icon getDisabledIcon()
+	{
 		return null;
 	}
 
-	public String getDescription() {
+	@Override
+	public String getDescription()
+	{
 		return RUN_WITH_VISUAL_VM;
 	}
 
+	@Override
 	@NotNull
-	public String getActionName() {
+	public String getActionName()
+	{
 		return RUN_WITH_VISUAL_VM1;
 	}
 
+	@Override
 	@NotNull
-	public String getId() {
+	public String getId()
+	{
 		return RUN_WITH_VISUAL_VM;
 	}
 
+	@Override
 	@NotNull
-	public String getStartActionText() {
+	public String getStartActionText()
+	{
 		return RUN_WITH_VISUAL_VM;
 	}
 
-	public String getContextActionId() {
+	@Override
+	public String getContextActionId()
+	{
 		// HACK: ExecutorRegistryImpl expects this to be non-null, but we don't want any context actions for every file
 		return getId() + " context-action-does-not-exist";
 	}
 
-	public String getHelpId() {
+	@Override
+	public String getHelpId()
+	{
 		return null;
 	}
 }

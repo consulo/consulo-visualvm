@@ -1,6 +1,6 @@
 package krasa.visualvm.action;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ProcessProxyFactory;
@@ -8,18 +8,22 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 
-public abstract class LauncherBasedAction extends AnAction {
+public abstract class LauncherBasedAction extends AnAction
+{
 	protected final ProcessHandler myProcessHandler;
 
-	LauncherBasedAction(String text, String description, Icon icon, ProcessHandler processHandler) {
+	LauncherBasedAction(String text, String description, Icon icon, ProcessHandler processHandler)
+	{
 		super(text, description, icon);
 		myProcessHandler = processHandler;
 	}
 
 	@Override
-	public void update(final AnActionEvent event) {
+	public void update(final AnActionEvent event)
+	{
 		final Presentation presentation = event.getPresentation();
-		if (!isVisible()) {
+		if(!isVisible())
+		{
 			presentation.setVisible(false);
 			presentation.setEnabled(false);
 			return;
@@ -28,7 +32,8 @@ public abstract class LauncherBasedAction extends AnAction {
 		presentation.setEnabled(!myProcessHandler.isProcessTerminated());
 	}
 
-	protected boolean isVisible() {
+	protected boolean isVisible()
+	{
 		return ProcessProxyFactory.getInstance().getAttachedProxy(myProcessHandler) != null;
 	}
 }

@@ -31,6 +31,8 @@
 
 package krasa.visualvm.runner;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
@@ -52,28 +54,33 @@ import krasa.visualvm.LogHelper;
 import krasa.visualvm.VisualVMContext;
 import krasa.visualvm.VisualVMHelper;
 import krasa.visualvm.executor.RunVisualVMExecutor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class RunVisualVMRunner extends DefaultJavaProgramRunner {
+public class RunVisualVMRunner extends DefaultJavaProgramRunner
+{
 	private static final Logger log = Logger.getInstance(DebugVisualVMRunner.class.getName());
 
+	@Override
 	@NotNull
-	public String getRunnerId() {
+	public String getRunnerId()
+	{
 		return RunVisualVMExecutor.RUN_WITH_VISUAL_VM;
 	}
 
-	public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-		return executorId.equals(RunVisualVMExecutor.RUN_WITH_VISUAL_VM) && profile instanceof ModuleRunProfile
-				&& !(profile instanceof RemoteConfiguration);
+	@Override
+	public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile)
+	{
+		return executorId.equals(RunVisualVMExecutor.RUN_WITH_VISUAL_VM) && profile instanceof ModuleRunProfile && !(profile instanceof
+				RemoteConfiguration);
 	}
 
 	@Override
 	public void execute(@NotNull final ExecutionEnvironment env, @Nullable final Callback callback)
 
-			throws ExecutionException {
+			throws ExecutionException
+	{
 		final VisualVMGenericRunnerSettings settings = ((VisualVMGenericRunnerSettings) env.getRunnerSettings());
-		if (settings != null) {
+		if(settings != null)
+		{
 			settings.generateId();
 			new VisualVMContext(settings).save();
 		}
@@ -81,7 +88,8 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner {
 		LogHelper.print("#execute", this);
 
 		boolean b = ApplicationSettingsComponent.openSettingsIfNotConfigured(env.getProject());
-		if (!b) {
+		if(!b)
+		{
 			return;
 		}
 		super.execute(env, callback);
@@ -89,16 +97,19 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner {
 
 
 	@Override
-	public AnAction[] createActions(ExecutionResult executionResult) {
+	public AnAction[] createActions(ExecutionResult executionResult)
+	{
 		return super.createActions(executionResult);
 	}
 
 
 	@Override
-	protected RunContentDescriptor doExecute(final Project project,
-											 final RunProfileState state,
-											 final RunContentDescriptor contentToReuse,
-											 final ExecutionEnvironment env) throws ExecutionException {
+	protected RunContentDescriptor doExecute(
+			final Project project,
+			final RunProfileState state,
+			final RunContentDescriptor contentToReuse,
+			final ExecutionEnvironment env) throws ExecutionException
+	{
 
 		RunContentDescriptor runContentDescriptor = super.doExecute(project, state, contentToReuse, env);
 		runVisualVM(env, state);
@@ -106,14 +117,20 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner {
 	}
 
 	@Override
-	public void onProcessStarted(RunnerSettings settings, ExecutionResult executionResult) {
+	public void onProcessStarted(RunnerSettings settings, ExecutionResult executionResult)
+	{
 		super.onProcessStarted(settings, executionResult);
 		LogHelper.print("#onProcessStarted", this);
 
 	}
 
 	@Override
-	public void patch(JavaParameters javaParameters, RunnerSettings settings, RunProfile runProfile, final boolean beforeExecution) throws ExecutionException {
+	public void patch(
+			JavaParameters javaParameters,
+			RunnerSettings settings,
+			RunProfile runProfile,
+			final boolean beforeExecution) throws ExecutionException
+	{
 
 		addVisualVMIdToJavaParameter(javaParameters, settings);
 		super.patch(javaParameters, settings, runProfile, beforeExecution);
@@ -121,7 +138,8 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner {
 
 
 	/*used for tomcat and normal applications*/
-	private void addVisualVMIdToJavaParameter(JavaParameters javaParameters, RunnerSettings settings) throws ExecutionException {
+	private void addVisualVMIdToJavaParameter(JavaParameters javaParameters, RunnerSettings settings) throws ExecutionException
+	{
 		final VisualVMGenericRunnerSettings runnerSettings = ((VisualVMGenericRunnerSettings) settings);
 		LogHelper.print("#addVisualVMIdToJavaParameter -Dvisualvm.id=" + runnerSettings.getVisualVMId(), this);
 		javaParameters.getVMParametersList().add("-Dvisualvm.id=" + runnerSettings.getVisualVMId());
@@ -129,27 +147,37 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner {
 
 	@Override
 	@Nullable
-	public RunnerSettings createConfigurationData(final ConfigurationInfoProvider settingsProvider) {
+	public RunnerSettings createConfigurationData(final ConfigurationInfoProvider settingsProvider)
+	{
 		return new VisualVMGenericRunnerSettings();
 	}
 
-	private void runVisualVM(ExecutionEnvironment env, RunProfileState state) throws ExecutionException {
+	private void runVisualVM(ExecutionEnvironment env, RunProfileState state) throws ExecutionException
+	{
 		final VisualVMGenericRunnerSettings settings = ((VisualVMGenericRunnerSettings) env.getRunnerSettings());
 		// tomcat uses PatchedLocalState
-		if (state.getClass().getSimpleName().equals(Hacks.BUNDLED_SERVERS_RUN_PROFILE_STATE)) {
+		if(state.getClass().getSimpleName().equals(Hacks.BUNDLED_SERVERS_RUN_PROFILE_STATE))
+		{
 			LogHelper.print("#runVisualVMAsync " + settings.getVisualVMId(), this);
-			new Thread() {
+			new Thread()
+			{
 				@Override
-				public void run() {
-					try {
+				public void run()
+				{
+					try
+					{
 						Thread.sleep(ApplicationSettingsComponent.getInstance().getState().getDelayForVisualVMStartAsLong());
 						VisualVMHelper.startVisualVM(settings, RunVisualVMRunner.this);
-					} catch (Exception e) {
+					}
+					catch(Exception e)
+					{
 						log.error(e);
 					}
 				}
 			}.start();
-		} else {
+		}
+		else
+		{
 			VisualVMHelper.startVisualVM(settings, this);
 		}
 	}
