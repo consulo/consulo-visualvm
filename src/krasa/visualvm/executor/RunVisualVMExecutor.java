@@ -2,8 +2,11 @@ package krasa.visualvm.executor;
 
 import javax.swing.Icon;
 
+import org.consulo.java.module.extension.JavaModuleExtension;
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 import com.intellij.execution.executors.DefaultRunExecutor;
+import com.intellij.openapi.project.Project;
 import krasa.visualvm.VisualVMIcons;
 
 public class RunVisualVMExecutor extends DefaultRunExecutor
@@ -63,6 +66,12 @@ public class RunVisualVMExecutor extends DefaultRunExecutor
 	public String getStartActionText()
 	{
 		return RUN_WITH_VISUAL_VM;
+	}
+
+	@Override
+	public boolean isApplicable(@NotNull Project project)
+	{
+		return ModuleExtensionHelper.getInstance(project).hasModuleExtension(JavaModuleExtension.class);
 	}
 
 	@Override
