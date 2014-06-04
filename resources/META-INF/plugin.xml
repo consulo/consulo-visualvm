@@ -21,6 +21,7 @@
 	</extensions>
 
 	<extensions defaultExtensionNs="com.intellij">
+		<errorHandler implementation="com.intellij.diagnostic.ITNReporter" />
 		<executor implementation="krasa.visualvm.executor.RunVisualVMExecutor"/>
 		<programRunner implementation="krasa.visualvm.runner.RunVisualVMRunner"/>
 		<programRunner implementation="krasa.visualvm.runner.DebugVisualVMRunner"/>
