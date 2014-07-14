@@ -10,7 +10,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.diagnostic.Logger;
 import krasa.visualvm.action.StartVisualVMConsoleAction;
 
-public class VisualVMConsoleActionsPostProcessor implements ConsoleActionsPostProcessor
+public class VisualVMConsoleActionsPostProcessor extends ConsoleActionsPostProcessor
 {
 	private static final Logger log = Logger.getInstance(VisualVMConsoleActionsPostProcessor.class.getName());
 
