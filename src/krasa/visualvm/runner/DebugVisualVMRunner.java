@@ -20,7 +20,6 @@ import com.intellij.execution.remote.RemoteConfiguration;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import krasa.visualvm.ApplicationSettingsComponent;
 import krasa.visualvm.Hacks;
@@ -98,14 +97,12 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner
 	@Override
 	@Nullable
 	protected RunContentDescriptor createContentDescriptor(
-			Project project,
 			RunProfileState state,
-			RunContentDescriptor contentToReuse,
 			ExecutionEnvironment env) throws ExecutionException
 	{
 		LogHelper.print("#createContentDescriptor", this);
 		addVisualVMIdToJavaParameter(env, state);
-		return super.createContentDescriptor(project, state, contentToReuse, env);
+		return super.createContentDescriptor(state, env);
 	}
 
 	/*is called for normal application*/
@@ -125,14 +122,12 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner
 	@Override
 	@Nullable
 	protected RunContentDescriptor attachVirtualMachine(
-			Project project,
 			RunProfileState state,
-			RunContentDescriptor contentToReuse,
 			ExecutionEnvironment env,
 			RemoteConnection connection,
 			boolean pollConnection) throws ExecutionException
 	{
-		RunContentDescriptor runContentDescriptor = super.attachVirtualMachine(project, state, contentToReuse, env, connection, pollConnection);
+		RunContentDescriptor runContentDescriptor = super.attachVirtualMachine(state, env, connection, pollConnection);
 		LogHelper.print("#attachVirtualMachine", this);
 		runVisualVM(env, state);
 		return runContentDescriptor;

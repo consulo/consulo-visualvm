@@ -45,7 +45,6 @@ import com.intellij.execution.impl.DefaultJavaProgramRunner;
 import com.intellij.execution.remote.RemoteConfiguration;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import krasa.visualvm.ApplicationSettingsComponent;
@@ -94,14 +93,6 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner
 		}
 		super.execute(env, callback);
 	}
-
-
-	@Override
-	public AnAction[] createActions(ExecutionResult executionResult)
-	{
-		return super.createActions(executionResult);
-	}
-
 
 	@Override
 	protected RunContentDescriptor doExecute(
