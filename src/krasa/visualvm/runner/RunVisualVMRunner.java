@@ -46,7 +46,6 @@ import com.intellij.execution.remote.RemoteConfiguration;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import krasa.visualvm.ApplicationSettingsComponent;
 import krasa.visualvm.Hacks;
 import krasa.visualvm.LogHelper;
@@ -68,8 +67,7 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner
 	@Override
 	public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile)
 	{
-		return executorId.equals(RunVisualVMExecutor.RUN_WITH_VISUAL_VM) && profile instanceof ModuleRunProfile && !(profile instanceof
-				RemoteConfiguration);
+		return executorId.equals(RunVisualVMExecutor.RUN_WITH_VISUAL_VM) && profile instanceof ModuleRunProfile && !(profile instanceof RemoteConfiguration);
 	}
 
 	@Override
@@ -95,14 +93,10 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner
 	}
 
 	@Override
-	protected RunContentDescriptor doExecute(
-			final Project project,
-			final RunProfileState state,
-			final RunContentDescriptor contentToReuse,
-			final ExecutionEnvironment env) throws ExecutionException
+	protected RunContentDescriptor doExecute(final RunProfileState state, final ExecutionEnvironment env) throws ExecutionException
 	{
 
-		RunContentDescriptor runContentDescriptor = super.doExecute(project, state, contentToReuse, env);
+		RunContentDescriptor runContentDescriptor = super.doExecute(state, env);
 		runVisualVM(env, state);
 		return runContentDescriptor;
 	}
@@ -116,11 +110,7 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner
 	}
 
 	@Override
-	public void patch(
-			JavaParameters javaParameters,
-			RunnerSettings settings,
-			RunProfile runProfile,
-			final boolean beforeExecution) throws ExecutionException
+	public void patch(JavaParameters javaParameters, RunnerSettings settings, RunProfile runProfile, final boolean beforeExecution) throws ExecutionException
 	{
 
 		addVisualVMIdToJavaParameter(javaParameters, settings);
