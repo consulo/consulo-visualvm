@@ -3,10 +3,10 @@ package krasa.visualvm.executor;
 import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.java.module.extension.JavaModuleExtension;
-import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.openapi.project.Project;
+import consulo.java.module.extension.JavaModuleExtension;
+import consulo.module.extension.ModuleExtensionHelper;
 import krasa.visualvm.VisualVMIcons;
 
 public class RunVisualVMExecutor extends DefaultRunExecutor

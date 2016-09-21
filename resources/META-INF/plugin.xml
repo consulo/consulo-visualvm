@@ -1,8 +1,8 @@
-<idea-plugin version="2">
-	<id>org.mustbe.consulo.visualvm</id>
+<idea-plugin>
+	<id>consulo.visualvm</id>
 	<name>VisualVM Launcher</name>
 	<vendor email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
-	<depends>org.consulo.java</depends>
+	<depends>consulo.java</depends>
 
 	<description><![CDATA[
      Launches VisualVM from within IDEA. <br/>
@@ -16,12 +16,11 @@
 		</component>
 	</application-components>
 
-	<extensions defaultExtensionNs="org.consulo.java">
+	<extensions defaultExtensionNs="consulo.java">
 		<programPatcher implementation="krasa.visualvm.VisualVMJavaProgramPatcher"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<errorHandler implementation="com.intellij.diagnostic.ITNReporter" />
 		<executor implementation="krasa.visualvm.executor.RunVisualVMExecutor"/>
 		<programRunner implementation="krasa.visualvm.runner.RunVisualVMRunner"/>
 		<programRunner implementation="krasa.visualvm.runner.DebugVisualVMRunner"/>
