@@ -5,7 +5,7 @@
 	<depends>consulo.java</depends>
 
 	<description><![CDATA[
-     Launches VisualVM from within IDEA. <br/>
+     Launches VisualVM from within Consulo. <br/>
      Use buttons from main toolbar to start VisualVM along with executed application, 
      or button next to the console window of already started application. 
       ]]></description>
