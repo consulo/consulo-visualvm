@@ -18,7 +18,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 
-@State(name = "VisualVMLauncher", storages = {@Storage(id = "VisualVMLauncher", file = "$APP_CONFIG$/VisualVMLauncher.xml")})
+@State(name = "VisualVMLauncher", storages = @Storage("VisualVMLauncher.xml"))
 public class ApplicationSettingsComponent implements ApplicationComponent, Configurable, PersistentStateComponent<PluginSettings>
 {
 	private static final Logger log = Logger.getInstance(ApplicationSettingsComponent.class.getName());
