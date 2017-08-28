@@ -31,13 +31,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.text.StringUtil;
 import krasa.visualvm.runner.VisualVMGenericDebuggerRunnerSettings;
 import krasa.visualvm.runner.VisualVMGenericRunnerSettings;
 
@@ -175,7 +175,7 @@ public final class VisualVMHelper
 
 	public static boolean isValidPath(String visualVmPath)
 	{
-		return !StringUtils.isBlank(visualVmPath) && new File(visualVmPath).exists();
+		return !StringUtil.isEmptyOrSpaces(visualVmPath) && new File(visualVmPath).exists();
 	}
 
 	private static SpecVersion getJavaVersion(String jdkHome)

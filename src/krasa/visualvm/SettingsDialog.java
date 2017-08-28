@@ -16,13 +16,13 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -118,7 +118,7 @@ public class SettingsDialog
 
 	private void setValidationMessage(String visualVmExecutable1)
 	{
-		if(StringUtils.isBlank(visualVmExecutable1))
+		if(StringUtil.isEmptyOrSpaces(visualVmExecutable1) )
 		{
 			validationMessageLabel.setText("Path is required");
 		}
