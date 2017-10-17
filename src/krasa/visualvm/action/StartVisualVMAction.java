@@ -6,7 +6,6 @@ import com.intellij.debugger.impl.DebuggerContextImpl;
 import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 
@@ -16,7 +15,7 @@ public class StartVisualVMAction extends AnAction implements AnAction.Transparen
 	@Override
 	public void actionPerformed(AnActionEvent e)
 	{
-		final Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
+		final Project project = e.getProject();
 		if(project == null)
 		{
 			return;
@@ -32,10 +31,10 @@ public class StartVisualVMAction extends AnAction implements AnAction.Transparen
 
 
 	@Override
-	public void update(AnActionEvent event)
+	public void update(AnActionEvent e)
 	{
-		Presentation presentation = event.getPresentation();
-		Project project = PlatformDataKeys.PROJECT.getData(event.getDataContext());
+		Presentation presentation = e.getPresentation();
+		Project project = e.getProject();
 		if(project == null)
 		{
 			presentation.setEnabled(false);
