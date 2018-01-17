@@ -36,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
-import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.ModuleRunProfile;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
@@ -46,6 +45,7 @@ import com.intellij.execution.remote.RemoteConfiguration;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
+import consulo.java.execution.configurations.OwnJavaParameters;
 import krasa.visualvm.ApplicationSettingsComponent;
 import krasa.visualvm.Hacks;
 import krasa.visualvm.LogHelper;
@@ -110,7 +110,7 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner
 	}
 
 	@Override
-	public void patch(JavaParameters javaParameters, RunnerSettings settings, RunProfile runProfile, final boolean beforeExecution) throws ExecutionException
+	public void patch(OwnJavaParameters javaParameters, RunnerSettings settings, RunProfile runProfile, final boolean beforeExecution) throws ExecutionException
 	{
 
 		addVisualVMIdToJavaParameter(javaParameters, settings);
@@ -119,7 +119,7 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner
 
 
 	/*used for tomcat and normal applications*/
-	private void addVisualVMIdToJavaParameter(JavaParameters javaParameters, RunnerSettings settings) throws ExecutionException
+	private void addVisualVMIdToJavaParameter(OwnJavaParameters javaParameters, RunnerSettings settings) throws ExecutionException
 	{
 		final VisualVMGenericRunnerSettings runnerSettings = ((VisualVMGenericRunnerSettings) settings);
 		LogHelper.print("#addVisualVMIdToJavaParameter -Dvisualvm.id=" + runnerSettings.getVisualVMId(), this);

@@ -8,7 +8,6 @@ import com.intellij.debugger.impl.GenericDebuggerRunner;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
 import com.intellij.execution.configurations.JavaCommandLine;
-import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.ModuleRunProfile;
 import com.intellij.execution.configurations.RemoteConnection;
 import com.intellij.execution.configurations.RunProfile;
@@ -20,6 +19,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
+import consulo.java.execution.configurations.OwnJavaParameters;
 import krasa.visualvm.ApplicationSettingsComponent;
 import krasa.visualvm.Hacks;
 import krasa.visualvm.LogHelper;
@@ -68,11 +68,7 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner
 
 
 	@Override
-	public void patch(
-			JavaParameters javaParameters,
-			RunnerSettings settings,
-			RunProfile runProfile,
-			boolean beforeExecution) throws ExecutionException
+	public void patch(OwnJavaParameters javaParameters, RunnerSettings settings, RunProfile runProfile, boolean beforeExecution) throws ExecutionException
 	{
 		LogHelper.print("#patch", this);
 		doPatch(javaParameters, settings);
@@ -80,7 +76,7 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner
 	}
 
 	/*is called for tomcat, but not normal application*/
-	private RemoteConnection doPatch(final JavaParameters javaParameters, final RunnerSettings settings) throws ExecutionException
+	private RemoteConnection doPatch(final OwnJavaParameters javaParameters, final RunnerSettings settings) throws ExecutionException
 	{
 		final VisualVMGenericDebuggerRunnerSettings debuggerSettings = ((VisualVMGenericDebuggerRunnerSettings) settings);
 		if(StringUtil.isEmpty(debuggerSettings.getDebugPort()))
@@ -94,9 +90,7 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner
 
 	@Override
 	@Nullable
-	protected RunContentDescriptor createContentDescriptor(
-			RunProfileState state,
-			ExecutionEnvironment env) throws ExecutionException
+	protected RunContentDescriptor createContentDescriptor(RunProfileState state, ExecutionEnvironment env) throws ExecutionException
 	{
 		LogHelper.print("#createContentDescriptor", this);
 		addVisualVMIdToJavaParameter(env, state);
@@ -109,7 +103,7 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner
 		final VisualVMGenericDebuggerRunnerSettings debuggerSettings = ((VisualVMGenericDebuggerRunnerSettings) executionEnvironment.getRunnerSettings());
 		if(runProfileState instanceof JavaCommandLine)
 		{
-			final JavaParameters parameters = ((JavaCommandLine) runProfileState).getJavaParameters();
+			final OwnJavaParameters parameters = ((JavaCommandLine) runProfileState).getJavaParameters();
 			LogHelper.print("#createContentDescriptor -Dvisualvm.id=" + debuggerSettings.getVisualVMId(), this);
 			parameters.getVMParametersList().add("-Dvisualvm.id=" + debuggerSettings.getVisualVMId());
 
@@ -119,11 +113,7 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner
 
 	@Override
 	@Nullable
-	protected RunContentDescriptor attachVirtualMachine(
-			RunProfileState state,
-			ExecutionEnvironment env,
-			RemoteConnection connection,
-			boolean pollConnection) throws ExecutionException
+	protected RunContentDescriptor attachVirtualMachine(RunProfileState state, ExecutionEnvironment env, RemoteConnection connection, boolean pollConnection) throws ExecutionException
 	{
 		RunContentDescriptor runContentDescriptor = super.attachVirtualMachine(state, env, connection, pollConnection);
 		LogHelper.print("#attachVirtualMachine", this);

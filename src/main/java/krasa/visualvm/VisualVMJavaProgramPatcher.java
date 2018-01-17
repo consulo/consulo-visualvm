@@ -2,10 +2,10 @@ package krasa.visualvm;
 
 import com.intellij.execution.CantRunException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.runners.JavaProgramPatcher;
 import com.intellij.openapi.diagnostic.Logger;
+import consulo.java.execution.configurations.OwnJavaParameters;
 import krasa.visualvm.action.StartVisualVMConsoleAction;
 
 public class VisualVMJavaProgramPatcher extends JavaProgramPatcher
@@ -14,7 +14,7 @@ public class VisualVMJavaProgramPatcher extends JavaProgramPatcher
 	long lastExecution;
 
 	@Override
-	public void patchJavaParameters(Executor executor, RunProfile configuration, JavaParameters javaParameters)
+	public void patchJavaParameters(Executor executor, RunProfile configuration, OwnJavaParameters javaParameters)
 	{
 		LogHelper.print("#patchJavaParameters start", this);
 
@@ -37,7 +37,7 @@ public class VisualVMJavaProgramPatcher extends JavaProgramPatcher
 		}
 	}
 
-	private VisualVMContext patch(JavaParameters javaParameters)
+	private VisualVMContext patch(OwnJavaParameters javaParameters)
 	{
 		String jdkPath = null;
 		try
