@@ -8,6 +8,7 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.openapi.project.Project;
 import consulo.java.module.extension.JavaModuleExtension;
 import consulo.module.extension.ModuleExtensionHelper;
+import consulo.ui.image.Image;
 import krasa.visualvm.VisualVMIcons;
 
 public class DebugVisualVMExecutor extends DefaultRunExecutor
@@ -24,22 +25,16 @@ public class DebugVisualVMExecutor extends DefaultRunExecutor
 	}
 
 	@Override
-	public Icon getToolWindowIcon()
+	public Image getToolWindowIcon()
 	{
 		return getIcon();
 	}
 
 	@Override
 	@Nonnull
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return VisualVMIcons.DEBUG;
-	}
-
-	@Override
-	public Icon getDisabledIcon()
-	{
-		return null;
 	}
 
 	@Override

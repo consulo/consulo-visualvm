@@ -1,17 +1,16 @@
 package krasa.visualvm.executor;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.openapi.project.Project;
 import consulo.java.module.extension.JavaModuleExtension;
 import consulo.module.extension.ModuleExtensionHelper;
+import consulo.ui.image.Image;
 import krasa.visualvm.VisualVMIcons;
 
 public class RunVisualVMExecutor extends DefaultRunExecutor
 {
-
 	public static final String RUN_WITH_VISUAL_VM = "Run with VisualVM";
 	public static final String RUN_WITH_VISUAL_VM1 = "RunWithVisualVM";
 
@@ -23,22 +22,16 @@ public class RunVisualVMExecutor extends DefaultRunExecutor
 	}
 
 	@Override
-	public Icon getToolWindowIcon()
+	public Image getToolWindowIcon()
 	{
 		return getIcon();
 	}
 
 	@Override
 	@Nonnull
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return VisualVMIcons.RUN;
-	}
-
-	@Override
-	public Icon getDisabledIcon()
-	{
-		return null;
 	}
 
 	@Override

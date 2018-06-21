@@ -7,6 +7,7 @@ import java.util.List;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import consulo.awt.TargetAWT;
 import krasa.visualvm.ApplicationSettingsComponent;
 import krasa.visualvm.LogHelper;
 import krasa.visualvm.VisualVMIcons;
@@ -27,7 +28,7 @@ public class StartVisualVMConsoleAction extends AnAction
 
 	public StartVisualVMConsoleAction(VisualVMContext visualVMContext)
 	{
-		super("Start VisualVM", null, VisualVMIcons.CONSOLE_RUN);
+		super("Start VisualVM", null, TargetAWT.to(VisualVMIcons.CONSOLE_RUN));
 		this.visualVMContext = visualVMContext;
 		created = System.currentTimeMillis();
 		currentlyExecuted.add(this);
