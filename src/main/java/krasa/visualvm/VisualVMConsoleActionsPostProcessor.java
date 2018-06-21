@@ -3,7 +3,7 @@ package krasa.visualvm;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.execution.actions.ConsoleActionsPostProcessor;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -14,9 +14,9 @@ public class VisualVMConsoleActionsPostProcessor extends ConsoleActionsPostProce
 {
 	private static final Logger log = Logger.getInstance(VisualVMConsoleActionsPostProcessor.class.getName());
 
-	@NotNull
+	@Nonnull
 	@Override
-	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions)
+	public AnAction[] postProcess(@Nonnull ConsoleView console, @Nonnull AnAction[] actions)
 	{
 		VisualVMContext context = VisualVMContext.load();
 		ArrayList<AnAction> anActions = new ArrayList<AnAction>();

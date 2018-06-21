@@ -16,7 +16,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -98,7 +98,7 @@ public class SettingsDialog
 		return new DefaultFormatterFactory(defaultFormat);
 	}
 
-	private void browseForFile(@NotNull final JTextField target)
+	private void browseForFile(@Nonnull final JTextField target)
 	{
 		final FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
 		descriptor.setHideIgnored(true);

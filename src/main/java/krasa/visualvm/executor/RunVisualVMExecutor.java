@@ -1,8 +1,8 @@
 package krasa.visualvm.executor;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.openapi.project.Project;
 import consulo.java.module.extension.JavaModuleExtension;
@@ -16,7 +16,7 @@ public class RunVisualVMExecutor extends DefaultRunExecutor
 	public static final String RUN_WITH_VISUAL_VM1 = "RunWithVisualVM";
 
 	@Override
-	@NotNull
+	@Nonnull
 	public String getToolWindowId()
 	{
 		return getId();
@@ -29,7 +29,7 @@ public class RunVisualVMExecutor extends DefaultRunExecutor
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public Icon getIcon()
 	{
 		return VisualVMIcons.RUN;
@@ -48,28 +48,28 @@ public class RunVisualVMExecutor extends DefaultRunExecutor
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public String getActionName()
 	{
 		return RUN_WITH_VISUAL_VM1;
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public String getId()
 	{
 		return RUN_WITH_VISUAL_VM;
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public String getStartActionText()
 	{
 		return RUN_WITH_VISUAL_VM;
 	}
 
 	@Override
-	public boolean isApplicable(@NotNull Project project)
+	public boolean isApplicable(@Nonnull Project project)
 	{
 		return ModuleExtensionHelper.getInstance(project).hasModuleExtension(JavaModuleExtension.class);
 	}

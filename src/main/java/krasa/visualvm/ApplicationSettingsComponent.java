@@ -1,12 +1,13 @@
 package krasa.visualvm;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -51,7 +52,7 @@ public class ApplicationSettingsComponent implements ApplicationComponent, Confi
 	// ApplicationComponent
 
 	@Override
-	@NotNull
+	@Nonnull
 	public String getComponentName()
 	{
 		return "VisualVMLauncher";
@@ -141,7 +142,7 @@ public class ApplicationSettingsComponent implements ApplicationComponent, Confi
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public PluginSettings getState()
 	{
 

@@ -31,8 +31,8 @@
 
 package krasa.visualvm.runner;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
@@ -58,20 +58,20 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner
 	private static final Logger log = Logger.getInstance(DebugVisualVMRunner.class.getName());
 
 	@Override
-	@NotNull
+	@Nonnull
 	public String getRunnerId()
 	{
 		return RunVisualVMExecutor.RUN_WITH_VISUAL_VM;
 	}
 
 	@Override
-	public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile)
+	public boolean canRun(@Nonnull String executorId, @Nonnull RunProfile profile)
 	{
 		return executorId.equals(RunVisualVMExecutor.RUN_WITH_VISUAL_VM) && profile instanceof ModuleRunProfile && !(profile instanceof RemoteConfiguration);
 	}
 
 	@Override
-	public void execute(@NotNull final ExecutionEnvironment env, @Nullable final Callback callback)
+	public void execute(@Nonnull final ExecutionEnvironment env, @Nullable final Callback callback)
 
 			throws ExecutionException
 	{

@@ -1,7 +1,8 @@
 package krasa.visualvm.runner;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.debugger.engine.DebuggerUtils;
 import com.intellij.debugger.impl.DebuggerManagerImpl;
 import com.intellij.debugger.impl.GenericDebuggerRunner;
@@ -32,14 +33,14 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner
 	private static final Logger log = Logger.getInstance(DebugVisualVMRunner.class.getName());
 
 	@Override
-	@NotNull
+	@Nonnull
 	public String getRunnerId()
 	{
 		return DebugVisualVMExecutor.EXECUTOR_ID;
 	}
 
 	@Override
-	public void execute(@NotNull final ExecutionEnvironment environment) throws ExecutionException
+	public void execute(@Nonnull final ExecutionEnvironment environment) throws ExecutionException
 	{
 		LogHelper.print("#execute", this);
 		final VisualVMGenericDebuggerRunnerSettings debuggerSettings = ((VisualVMGenericDebuggerRunnerSettings) environment.getRunnerSettings());
@@ -55,7 +56,7 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner
 	}
 
 	@Override
-	public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile)
+	public boolean canRun(@Nonnull String executorId, @Nonnull RunProfile profile)
 	{
 		return executorId.equals(DebugVisualVMExecutor.EXECUTOR_ID) && profile instanceof ModuleRunProfile && !(profile instanceof RemoteConfiguration);
 	}
