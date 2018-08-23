@@ -1,7 +1,22 @@
 package krasa.visualvm;
 
-public class PluginSettings
+import javax.annotation.Nullable;
+import javax.inject.Singleton;
+
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.util.xmlb.XmlSerializerUtil;
+
+@Singleton
+@State(name = "VisualVMLauncher", storages = @Storage("visual-vm.xml"))
+public class PluginSettings implements PersistentStateComponent<PluginSettings>
 {
+	public static PluginSettings getInstance()
+	{
+		return ServiceManager.getService(PluginSettings.class);
+	}
 
 	private String visualVmExecutable;
 	private boolean debug;
@@ -62,5 +77,18 @@ public class PluginSettings
 	public long getDelayForVisualVMStartAsLong()
 	{
 		return Long.parseLong(delayForVisualVMStart);
+	}
+
+	@Nullable
+	@Override
+	public PluginSettings getState()
+	{
+		return this;
+	}
+
+	@Override
+	public void loadState(PluginSettings state)
+	{
+		XmlSerializerUtil.copyBean(state, this);
 	}
 }

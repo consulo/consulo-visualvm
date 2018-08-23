@@ -131,7 +131,7 @@ public final class VisualVMHelper
 	@Nullable
 	public static String getVisualVmHome()
 	{
-		return ApplicationSettingsComponent.getInstance().getVisualVmHome();
+		return PluginSettings.getInstance().getVisualVmExecutable();
 	}
 
 	public static void openInVisualVM(long id, String visualVmPath, String jdkHome, Object thisInstance) throws IOException

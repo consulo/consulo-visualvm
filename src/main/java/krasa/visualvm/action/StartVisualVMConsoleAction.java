@@ -8,11 +8,12 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import consulo.awt.TargetAWT;
-import krasa.visualvm.ApplicationSettingsComponent;
+import krasa.visualvm.VisualVMConfigurable;
 import krasa.visualvm.LogHelper;
-import krasa.visualvm.VisualVMIcons;
+import krasa.visualvm.PluginSettings;
 import krasa.visualvm.VisualVMContext;
 import krasa.visualvm.VisualVMHelper;
+import krasa.visualvm.VisualVMIcons;
 
 public class StartVisualVMConsoleAction extends AnAction
 {
@@ -50,7 +51,7 @@ public class StartVisualVMConsoleAction extends AnAction
 	@Override
 	public void actionPerformed(final AnActionEvent e)
 	{
-		if(!ApplicationSettingsComponent.openSettingsIfNotConfigured(e.getProject()))
+		if(!VisualVMConfigurable.openSettingsIfNotConfigured(e.getProject()))
 		{
 			return;
 		}
@@ -99,7 +100,7 @@ public class StartVisualVMConsoleAction extends AnAction
 	{
 		long l = System.currentTimeMillis() - next.getCreated();
 		LogHelper.print("#isRecentlyCreated " + l + " " + next, this);
-		return l < ApplicationSettingsComponent.getInstance().getState().getDurationToSetContextToButtonAsLong();
+		return l < PluginSettings.getInstance().getDurationToSetContextToButtonAsLong();
 	}
 
 	@Override

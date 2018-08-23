@@ -10,12 +10,6 @@
      or button next to the console window of already started application. 
       ]]></description>
 
-	<application-components>
-		<component>
-			<implementation-class>krasa.visualvm.ApplicationSettingsComponent</implementation-class>
-		</component>
-	</application-components>
-
 	<extensions defaultExtensionNs="consulo.java">
 		<programPatcher implementation="krasa.visualvm.VisualVMJavaProgramPatcher"/>
 	</extensions>
@@ -26,5 +20,9 @@
 		<programRunner implementation="krasa.visualvm.runner.DebugVisualVMRunner"/>
 		<executor implementation="krasa.visualvm.executor.DebugVisualVMExecutor"/>
 		<consoleActionsPostProcessor implementation="krasa.visualvm.VisualVMConsoleActionsPostProcessor"/>
+
+		<applicationService serviceImplementation="krasa.visualvm.PluginSettings" />
+
+		<applicationConfigurable parentId="execution" displayName="Visual VM" instance="krasa.visualvm.VisualVMConfigurable" />
 	</extensions>
 </idea-plugin>

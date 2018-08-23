@@ -33,6 +33,7 @@ package krasa.visualvm.runner;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
@@ -46,9 +47,10 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import consulo.java.execution.configurations.OwnJavaParameters;
-import krasa.visualvm.ApplicationSettingsComponent;
+import krasa.visualvm.VisualVMConfigurable;
 import krasa.visualvm.Hacks;
 import krasa.visualvm.LogHelper;
+import krasa.visualvm.PluginSettings;
 import krasa.visualvm.VisualVMContext;
 import krasa.visualvm.VisualVMHelper;
 import krasa.visualvm.executor.RunVisualVMExecutor;
@@ -84,7 +86,7 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner
 
 		LogHelper.print("#execute", this);
 
-		boolean b = ApplicationSettingsComponent.openSettingsIfNotConfigured(env.getProject());
+		boolean b = VisualVMConfigurable.openSettingsIfNotConfigured(env.getProject());
 		if(!b)
 		{
 			return;
@@ -147,7 +149,7 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner
 				{
 					try
 					{
-						Thread.sleep(ApplicationSettingsComponent.getInstance().getState().getDelayForVisualVMStartAsLong());
+						Thread.sleep(PluginSettings.getInstance().getDelayForVisualVMStartAsLong());
 						VisualVMHelper.startVisualVM(settings, RunVisualVMRunner.this);
 					}
 					catch(Exception e)

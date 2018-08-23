@@ -21,9 +21,10 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import consulo.java.execution.configurations.OwnJavaParameters;
-import krasa.visualvm.ApplicationSettingsComponent;
+import krasa.visualvm.VisualVMConfigurable;
 import krasa.visualvm.Hacks;
 import krasa.visualvm.LogHelper;
+import krasa.visualvm.PluginSettings;
 import krasa.visualvm.VisualVMContext;
 import krasa.visualvm.VisualVMHelper;
 import krasa.visualvm.executor.DebugVisualVMExecutor;
@@ -47,7 +48,7 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner
 		debuggerSettings.generateId();
 		new VisualVMContext(debuggerSettings).save();
 
-		boolean b = ApplicationSettingsComponent.openSettingsIfNotConfigured(environment.getProject());
+		boolean b = VisualVMConfigurable.openSettingsIfNotConfigured(environment.getProject());
 		if(!b)
 		{
 			return;
@@ -137,7 +138,7 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner
 					LogHelper.print("#Thread run", this);
 					try
 					{
-						Thread.sleep(ApplicationSettingsComponent.getInstance().getState().getDelayForVisualVMStartAsLong());
+						Thread.sleep(PluginSettings.getInstance().getDelayForVisualVMStartAsLong());
 						VisualVMHelper.startVisualVM(debuggerSettings, DebugVisualVMRunner.this);
 					}
 					catch(Exception e)
