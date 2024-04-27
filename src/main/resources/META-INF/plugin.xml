@@ -2,6 +2,7 @@
 	<id>consulo.visualvm</id>
 	<name>VisualVM Launcher</name>
 	<depends>consulo.java</depends>
+	<version>SNAPSHOT</version>
 	<tags>
 		<tag>tools</tag>
 	</tags>
