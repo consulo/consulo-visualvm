@@ -24,20 +24,23 @@
  */
 package krasa.visualvm.integration;
 
-import com.intellij.notification.*;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ApplicationNamesInfo;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.system.CpuArch;
+import consulo.application.ApplicationManager;
+import consulo.application.util.SystemInfo;
+import consulo.container.boot.ContainerPathManager;
+import consulo.logging.Logger;
+import consulo.module.Module;
+import consulo.platform.Platform;
+import consulo.project.Project;
+import consulo.project.ui.notification.Notification;
+import consulo.project.ui.notification.NotificationGroup;
+import consulo.project.ui.notification.NotificationType;
+import consulo.project.ui.notification.Notifications;
+import consulo.util.io.FileUtil;
+import consulo.util.lang.StringUtil;
+import consulo.visualvm.VisualVMNotificationGroupContributor;
 import krasa.visualvm.ApplicationSettingsService;
 import krasa.visualvm.LogHelper;
 import krasa.visualvm.PluginSettings;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -50,7 +53,7 @@ import java.util.List;
 import java.util.Properties;
 
 public final class VisualVMHelper {
-	private static final Logger log = Logger.getInstance(VisualVMHelper.class.getName());
+	private static final Logger log = Logger.getInstance(VisualVMHelper.class);
 
 	public static void startVisualVM(VisualVMContext vmContext, Project project, Object thisInstance) {
 		if (vmContext == null) {
@@ -69,12 +72,12 @@ public final class VisualVMHelper {
 
 		String visualVmPath = state.getVisualVmExecutable();
 		if (!isValidPath(visualVmPath)) {
-			NotificationGroup group = NotificationGroupManager.getInstance().getNotificationGroup("VisualVMLauncher");
+			NotificationGroup group = VisualVMNotificationGroupContributor.GROUP;
 			Notification notification = group.createNotification("Path to VisualVM is not valid, path='" + visualVmPath + "'", NotificationType.ERROR);
 			ApplicationManager.getApplication().invokeLater(() -> Notifications.Bus.notify(notification));
 		} else {
 			try {
-				if (StringUtils.isBlank(jdkHome_doNotOverride)) {
+				if (StringUtil.isEmptyOrSpaces(jdkHome_doNotOverride)) {
 					new VisualVMProcess(project, visualVmPath).run();
 				} else {
 					new VisualVMProcess(project, visualVmPath, "--jdkhome", jdkHome_doNotOverride).run();
@@ -95,7 +98,7 @@ public final class VisualVMHelper {
 		boolean sourceConfig = pluginSettings.isSourceConfig();
 
 		if (useModuleJdk) {
-			if (StringUtils.isBlank(jdkHome)) {
+			if (StringUtil.isEmptyOrSpaces(jdkHome)) {
 				jdkHome = customJdkHome;
 			}
 		} else {
@@ -108,7 +111,7 @@ public final class VisualVMHelper {
 		}
 
 		if (!isValidPath(visualVmPath)) {
-			NotificationGroup group = NotificationGroupManager.getInstance().getNotificationGroup("VisualVMLauncher");
+			NotificationGroup group = VisualVMNotificationGroupContributor.GROUP;
 			Notification myNotification = group.createNotification("Path to VisualVM is not valid, path='" + visualVmPath + "'", NotificationType.ERROR);
 			ApplicationManager.getApplication().invokeLater(() -> Notifications.Bus.notify(myNotification));
 		} else {
@@ -121,7 +124,7 @@ public final class VisualVMHelper {
 		List<String> cmds = new ArrayList<>();
 		try {
 			cmds.add(visualVmPath);
-			if (!StringUtils.isBlank(jdkHome)) {
+			if (!StringUtil.isEmptyOrSpaces(jdkHome)) {
 				cmds.add("--jdkhome");
 				cmds.add(jdkHome);
 			}
@@ -174,23 +177,23 @@ public final class VisualVMHelper {
 
 
 	protected static File getIdeExecutable() {
-		String scriptName = ApplicationNamesInfo.getInstance().getScriptName();
+		File file = ContainerPathManager.get().getAppHomeDirectory();
 		if (SystemInfo.isWindows) {
-			String bits = CpuArch.CURRENT.width == 64 ? "64" : "";
-			return new File(PathManager.getBinPath(), scriptName + bits + ".exe");
+			String bits = Platform.current().jvm().isAny64Bit() ? "64" : "";
+			return new File(file, "consulo" + bits + ".exe");
 		} else if (SystemInfo.isMac) {
-			File appDir = new File(PathManager.getHomePath(), "MacOS");
-			return new File(appDir, scriptName);
+			File appDir = new File(file, "MacOS");
+			return new File(appDir, "consulo");
 		} else if (SystemInfo.isUnix) {
-			return new File(PathManager.getBinPath(), scriptName + ".sh");
+			return new File(file, "consulo.sh");
 		} else {
-			log.error("invalid OS: " + SystemInfo.getOsNameAndVersion());
+			log.error("invalid OS: " + System.getProperty("os.name"));
 			return null;
 		}
 	}
 
 	public static boolean isValidPath(String visualVmPath) {
-		return !StringUtils.isBlank(visualVmPath) && new File(visualVmPath).exists();
+		return !StringUtil.isEmptyOrSpaces(visualVmPath) && new File(visualVmPath).exists();
 	}
 
 
@@ -208,7 +211,7 @@ public final class VisualVMHelper {
 			PluginSettings settings = ApplicationSettingsService.getInstance().getState();
 
 			List<String> cmd = new ArrayList<>(Arrays.asList(cmds));
-			if (StringUtils.isNotBlank(settings.getLaf())) {
+			if (!StringUtil.isEmptyOrSpaces(settings.getLaf())) {
 				cmd.add("--laf");
 				cmd.add(settings.getLaf());
 			}
@@ -257,7 +260,7 @@ public final class VisualVMHelper {
 //todo needs sdk
 		String visualVmPath = state.getVisualVmExecutable();
 		if (!isValidPath(visualVmPath)) {
-			NotificationGroup group = NotificationGroupManager.getInstance().getNotificationGroup("VisualVMLauncher");
+			NotificationGroup group = VisualVMNotificationGroupContributor.GROUP;
 			Notification notification = group.createNotification("Path to VisualVM is not valid, path='" + visualVmPath + "'", NotificationType.ERROR);
 			ApplicationManager.getApplication().invokeLater(() -> Notifications.Bus.notify(notification));
 		} else {

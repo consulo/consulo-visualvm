@@ -1,37 +1,23 @@
 package krasa.visualvm.action;
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.util.NlsActions;
-import org.jetbrains.annotations.NotNull;
+import consulo.ui.ex.action.DumbAwareAction;
+import consulo.ui.image.Image;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.util.function.Supplier;
-
-public abstract class MyDumbAwareAction extends DumbAwareAction {
+public abstract class MyDumbAwareAction extends DumbAwareAction
+{
 	public MyDumbAwareAction() {
 	}
 
-	public MyDumbAwareAction(@Nullable Icon icon) {
+	public MyDumbAwareAction(@Nullable Image icon) {
 		super(icon);
 	}
 
-	public MyDumbAwareAction(@Nullable @NlsActions.ActionText String text) {
+	public MyDumbAwareAction(@Nullable String text) {
 		super(text);
 	}
 
-	public MyDumbAwareAction(@NotNull Supplier<@NlsActions.ActionText String> dynamicText) {
-		super(dynamicText);
-	}
-
-	public MyDumbAwareAction(@Nullable @NlsActions.ActionText String text, @Nullable @NlsActions.ActionDescription String description, @Nullable Icon icon) {
+	public MyDumbAwareAction(@Nullable  String text, @Nullable String description, @Nullable Image icon) {
 		super(text, description, icon);
-	}
-
-
-	@Override
-	public @NotNull ActionUpdateThread getActionUpdateThread() {
-		return ActionUpdateThread.BGT;
 	}
 }

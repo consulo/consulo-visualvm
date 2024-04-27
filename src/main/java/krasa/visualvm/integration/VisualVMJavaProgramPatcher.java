@@ -1,49 +1,32 @@
 package krasa.visualvm.integration;
 
-import com.intellij.execution.CantRunException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.JavaParameters;
-import com.intellij.execution.configurations.ModuleBasedConfiguration;
-import com.intellij.execution.configurations.RunConfigurationModule;
-import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.runners.JavaProgramPatcher;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkAdditionalData;
-import com.intellij.openapi.projectRoots.SdkTypeId;
-import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
-import krasa.visualvm.Hacks;
+import com.intellij.java.execution.runners.JavaProgramPatcher;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.CantRunException;
+import consulo.execution.configuration.ModuleBasedConfiguration;
+import consulo.execution.configuration.RunConfigurationModule;
+import consulo.execution.configuration.RunProfile;
+import consulo.execution.executor.Executor;
+import consulo.java.execution.configurations.OwnJavaParameters;
+import consulo.logging.Logger;
+import consulo.module.Module;
 import krasa.visualvm.LogHelper;
-import krasa.visualvm.action.StartVisualVMConsoleAction;
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.jetbrains.annotations.Nullable;
 
-public class VisualVMJavaProgramPatcher extends JavaProgramPatcher {
-	private static final Logger log = Logger.getInstance(VisualVMJavaProgramPatcher.class.getName());
-	long lastExecution;
+@ExtensionImpl
+public class VisualVMJavaProgramPatcher extends JavaProgramPatcher
+{
+	private static final Logger log = Logger.getInstance(VisualVMJavaProgramPatcher.class);
 
 	@Override
-	public void patchJavaParameters(Executor executor, RunProfile configuration, JavaParameters javaParameters) {
+	public void patchJavaParameters(Executor executor, RunProfile configuration, OwnJavaParameters javaParameters) {
 		LogHelper.print("#patchJavaParameters start", this);
 
 		String name = configuration.getClass().getName();
-		if (name.startsWith(Hacks.BUNDLED_SERVERS_RUN_PROFILE)) {
-			LogHelper.print("patchJavaParameters " + name, this);
-
-			if (System.currentTimeMillis() - lastExecution > 1000) {
-				LogHelper.print("patchJavaParameters " + name + " patching", this);
-
-				VisualVMContext visualVMContext = patch(configuration, javaParameters);
-				StartVisualVMConsoleAction.setVisualVMContextToRecentlyCreated(visualVMContext);
-				lastExecution = System.currentTimeMillis();
-			}
-		} else {
-			patch(configuration, javaParameters);
-		}
+		patch(configuration, javaParameters);
 	}
 
-	private VisualVMContext patch(RunProfile configuration, JavaParameters javaParameters) {
+	private VisualVMContext patch(RunProfile configuration, OwnJavaParameters javaParameters) {
 		String jdkPath = getJdkPath(javaParameters);
 
 		final Long appId = VisualVMHelper.getNextID();
@@ -57,24 +40,11 @@ public class VisualVMJavaProgramPatcher extends JavaProgramPatcher {
 	}
 
 	@Nullable
-	public static String getJdkPath(JavaParameters javaParameters) {
+	public static String getJdkPath(OwnJavaParameters javaParameters) {
 		String jdkPath = null;
 		try {
 			if (javaParameters.getJdk() != null && javaParameters.getJdk().getHomeDirectory() != null) {
-				Sdk jdk = javaParameters.getJdk();
-				SdkTypeId sdkType = jdk.getSdkType();
-				if ("JavaSDK".equals(sdkType.getName())) {
-					jdkPath = javaParameters.getJdkPath();
-				} else if ("IDEA JDK".equals(sdkType.getName())) {
-					ProjectJdkImpl jdk1 = (ProjectJdkImpl) javaParameters.getJdk();
-					SdkAdditionalData sdkAdditionalData = jdk1.getSdkAdditionalData();
-					if (sdkAdditionalData != null) {
-						Object javaSdk = MethodUtils.invokeMethod(sdkAdditionalData, true, "getJavaSdk");
-						if (javaSdk instanceof Sdk) {
-							jdkPath = ((Sdk) javaSdk).getHomePath();
-						}
-					}
-				}
+				jdkPath = javaParameters.getJdkPath();
 			}
 		} catch (CantRunException e) {
 			// return;

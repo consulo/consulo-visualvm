@@ -1,15 +1,14 @@
 package krasa.visualvm.action;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
-import krasa.visualvm.ApplicationSettingsService;
+import consulo.project.Project;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.action.Presentation;
+import consulo.visualvm.icon.VisualVMIconGroup;
 import krasa.visualvm.LogHelper;
 import krasa.visualvm.MyConfigurable;
-import krasa.visualvm.Resources;
 import krasa.visualvm.integration.VisualVMContext;
 import krasa.visualvm.integration.VisualVMHelper;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class StartVisualVMConsoleAction extends MyDumbAwareAction {
 	}
 
 	public StartVisualVMConsoleAction(VisualVMContext visualVMContext) {
-		super("Start VisualVM", null, Resources.CONSOLE_RUN);
+		super("Start VisualVM", null, VisualVMIconGroup.console16());
 		this.visualVMContext = visualVMContext;
 		created = System.currentTimeMillis();
 		currentlyExecuted.add(this);
@@ -45,10 +44,11 @@ public class StartVisualVMConsoleAction extends MyDumbAwareAction {
 
 	@Override
 	public void actionPerformed(final AnActionEvent e) {
-		if (!MyConfigurable.openSettingsIfNotConfigured(e.getProject())) {
+		Project project = e.getData(Project.KEY);
+		if (!MyConfigurable.openSettingsIfNotConfigured(project)) {
 			return;
 		}
-		VisualVMHelper.startVisualVM(visualVMContext, e.getProject(), this);
+		VisualVMHelper.startVisualVM(visualVMContext, project, this);
 	}
 
 	public void setVisualVMContext(VisualVMContext visualVMContext) {
@@ -63,26 +63,6 @@ public class StartVisualVMConsoleAction extends MyDumbAwareAction {
 
 	public long getCreated() {
 		return created;
-	}
-
-	public static void setVisualVMContextToRecentlyCreated(VisualVMContext visualVMContext) {
-		LogHelper.print("#setVisualVMContextToRecentlyCreated" + visualVMContext, null);
-		Iterator<StartVisualVMConsoleAction> iterator = currentlyExecuted.iterator();
-		while (iterator.hasNext()) {
-			StartVisualVMConsoleAction next = iterator.next();
-			if (isRecentlyCreated(next)) {
-				next.setVisualVMContext(visualVMContext);
-			} else {
-				LogHelper.print("#setVisualVMContextToRecentlyCreated remove", null);
-				iterator.remove();
-			}
-		}
-	}
-
-	private static boolean isRecentlyCreated(StartVisualVMConsoleAction next) {
-		long l = System.currentTimeMillis() - next.getCreated();
-		LogHelper.print("#isRecentlyCreated " + l + " " + next, null);
-		return l < ApplicationSettingsService.getInstance().getState().getDurationToSetContextToButtonAsLong();
 	}
 
 	@Override

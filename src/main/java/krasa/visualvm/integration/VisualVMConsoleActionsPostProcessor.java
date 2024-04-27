@@ -1,17 +1,19 @@
 package krasa.visualvm.integration;
 
-import com.intellij.execution.actions.ConsoleActionsPostProcessor;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.diagnostic.Logger;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.ui.console.ConsoleActionsPostProcessor;
+import consulo.execution.ui.console.ConsoleView;
+import consulo.logging.Logger;
+import consulo.ui.ex.action.AnAction;
 import krasa.visualvm.action.StartVisualVMConsoleAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@ExtensionImpl
 public class VisualVMConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
-	private static final Logger log = Logger.getInstance(VisualVMConsoleActionsPostProcessor.class.getName());
+	private static final Logger log = Logger.getInstance(VisualVMConsoleActionsPostProcessor.class);
 
 	@NotNull
 	@Override

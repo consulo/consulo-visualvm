@@ -1,16 +1,23 @@
 package krasa.visualvm.integration;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.MultiMap;
+import consulo.application.util.SystemInfo;
+import consulo.content.base.SourcesOrderRootType;
+import consulo.language.content.LanguageContentFolderScopes;
+import consulo.language.content.ProductionContentFolderTypeProvider;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.module.content.ModuleRootManager;
+import consulo.module.content.layer.ContentEntry;
+import consulo.module.content.layer.ContentFolder;
+import consulo.module.content.layer.orderEntry.ModuleOrderEntry;
+import consulo.module.content.layer.orderEntry.ModuleSourceOrderEntry;
+import consulo.module.content.layer.orderEntry.OrderEntry;
+import consulo.project.Project;
+import consulo.util.collection.MultiMap;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import java.io.File;
 import java.util.*;
@@ -67,7 +74,7 @@ public class SourceRoots {
 				//				} else {
 				//					System.err.println();
 				//				}
-				VirtualFile[] sources = orderEntry.getFiles(OrderRootType.SOURCES);
+				VirtualFile[] sources = orderEntry.getFiles(SourcesOrderRootType.getInstance());
 				for (VirtualFile virtualFile : sources) {
 					add(virtualFile);
 				}
@@ -179,12 +186,8 @@ public class SourceRoots {
 			this.contentEntry = contentEntry;
 			contentEntryFile = contentEntry.getFile();
 
-			SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
-			for (SourceFolder sourceFolder : sourceFolders) {
-				JpsModuleSourceRootType<?> rootType = sourceFolder.getRootType();
-				if (rootType.getClass().getName().contains("ResourceRootType")) {
-					continue;
-				}
+			ContentFolder[] sourceFolders = contentEntry.getFolders(LanguageContentFolderScopes.of(ProductionContentFolderTypeProvider.getInstance()));
+			for (ContentFolder sourceFolder : sourceFolders) {
 				VirtualFile file = sourceFolder.getFile();
 				if (file != null) {
 					paths.add(file);
@@ -201,7 +204,7 @@ public class SourceRoots {
 				sb.append(contentEntryFile.getPath());
 				sb.append("[subpaths=");
 				for (VirtualFile file : paths) {
-					sb.append(VfsUtilCore.getRelativePath(file, contentEntryFile));
+					sb.append(VirtualFileUtil.getRelativePath(file, contentEntryFile));
 					sb.append(":");
 				}
 				removeLastSeparator(sb, ":");

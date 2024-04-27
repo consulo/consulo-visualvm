@@ -1,39 +1,45 @@
 package krasa.visualvm;
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.diagnostic.Logger;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
+import consulo.component.persist.PersistentStateComponent;
+import consulo.component.persist.State;
+import consulo.component.persist.Storage;
+import consulo.ide.ServiceManager;
+import consulo.logging.Logger;
+import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 
+@ServiceAPI(ComponentScope.APPLICATION)
+@ServiceImpl
+@Singleton
 @State(name = "VisualVMLauncher", storages = {@Storage("VisualVMLauncher.xml")})
-public class ApplicationSettingsService implements PersistentStateComponent<PluginSettings> {
-	private static final Logger log = Logger.getInstance(ApplicationSettingsService.class.getName());
+public class ApplicationSettingsService implements PersistentStateComponent<PluginSettings>
+{
+	private static final Logger log = Logger.getInstance(ApplicationSettingsService.class);
 
 	private PluginSettings settings = new PluginSettings();
 
-	public static ApplicationSettingsService getInstance() {
+	public static ApplicationSettingsService getInstance()
+	{
 		return ServiceManager.getService(ApplicationSettingsService.class);
 	}
 
 	@NotNull
-	public String getComponentName() {
-		return "VisualVMLauncher";
-	}
-
-
-	@NotNull
 	@Override
-	public PluginSettings getState() {
-		if (settings == null) {
+	public PluginSettings getState()
+	{
+		if(settings == null)
+		{
 			settings = new PluginSettings();
 		}
 		return settings;
 	}
 
 	@Override
-	public void loadState(PluginSettings state) {
+	public void loadState(PluginSettings state)
+	{
 		this.settings = state;
 	}
 }

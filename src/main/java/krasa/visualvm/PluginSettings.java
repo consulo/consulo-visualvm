@@ -5,15 +5,12 @@ import krasa.visualvm.integration.VisualVMHelper;
 public class PluginSettings {
 
 	private String visualVmExecutable;
-	private String durationToSetContextToButton = "10000";
-	private String delayForVisualVMStart = "10000";
 	private String jdkHome;
 	private boolean useTabIndex;
 	private String tabIndex = "2";
 	private boolean sourceConfig = false;
 	private boolean useModuleJdk = true;
 	private String laf = "";
-
 
 	public String getVisualVmExecutable() {
 		return visualVmExecutable;
@@ -23,35 +20,9 @@ public class PluginSettings {
 		this.visualVmExecutable = visualVmExecutable;
 	}
 
-
 	public static boolean isValid(PluginSettings state) {
 		return state != null && VisualVMHelper.isValidPath(state.getVisualVmExecutable());
 	}
-
-	public String getDurationToSetContextToButton() {
-		return durationToSetContextToButton;
-	}
-
-	public void setDurationToSetContextToButton(final String durationToSetContextToButton) {
-		this.durationToSetContextToButton = durationToSetContextToButton;
-	}
-
-	public String getDelayForVisualVMStart() {
-		return delayForVisualVMStart;
-	}
-
-	public void setDelayForVisualVMStart(String delayForVisualVMStart) {
-		this.delayForVisualVMStart = delayForVisualVMStart;
-	}
-
-	public long getDurationToSetContextToButtonAsLong() {
-		return Long.parseLong(durationToSetContextToButton);
-	}
-
-	public long getDelayForVisualVMStartAsLong() {
-		return Long.parseLong(delayForVisualVMStart);
-	}
-
 
 	public String getJdkHome() {
 		return jdkHome;

@@ -1,7 +1,10 @@
-<idea-plugin version="2">
-	<id>VisualVMLauncher</id>
+<consulo-plugin>
+	<id>consulo.visualvm</id>
 	<name>VisualVM Launcher</name>
-
+	<depends>consulo.java</depends>
+	<tags>
+		<tag>tools</tag>
+	</tags>
 	<vendor url="https://github.com/krasa/VisualVMLauncher" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
 	</vendor>
@@ -10,19 +13,13 @@
      <a href="https://visualvm.github.io/">VisualVM</a> integration.<br/>
      Use buttons from the main toolbar to start VisualVM along with executed application,
      or button next to the console window of already started application.                    
-        <br> <br>
-        <a href="https://www.paypal.me/VojtechKrasa">Donations</a> | <a href="https://github.com/krasa/VisualVMLauncher/">GitHub</a> | <a href="https://github.com/krasa/VisualVMLauncher/issues">Issues</a>
       ]]></description>
 
-
-	<project-components>
-	</project-components>
 
 	<actions>
 		<action
 				id="krasa.visualvm.action.StartVisualVMMainToolbarAction"
 				class="krasa.visualvm.action.StartVisualVMMainToolbarAction"
-				icon="/krasa/visualvm/svg/console16.svg"
 				text="Start VisualVM"
 				description="Start VisualVM with selectable JDK">
 			<add-to-group group-id="MainToolBar" anchor="last"/>
@@ -37,20 +34,5 @@
 		<!--		</action>-->
 	</actions>
 
-	<extensions defaultExtensionNs="com.intellij">
-		<notificationGroup id="VisualVMLauncher" displayType="BALLOON" isLogByDefault="true"/>
 
-		<executor implementation="krasa.visualvm.executor.RunVisualVMExecutor"/>
-		<programRunner implementation="krasa.visualvm.runner.RunVisualVMRunner"/>
-		<programRunner implementation="krasa.visualvm.runner.DebugVisualVMRunner"/>
-		<executor implementation="krasa.visualvm.executor.DebugVisualVMExecutor"/>
-		<java.programPatcher implementation="krasa.visualvm.integration.VisualVMJavaProgramPatcher"/>
-		<consoleActionsPostProcessor implementation="krasa.visualvm.integration.VisualVMConsoleActionsPostProcessor"/>
-		<applicationConfigurable instance="krasa.visualvm.MyConfigurable" id="VisualVMLauncher"
-								 displayName="VisualVM Launcher"/>
-		<applicationService serviceImplementation="krasa.visualvm.ApplicationSettingsService"/>
-	</extensions>
-
-	<depends>com.intellij.modules.java</depends>
-
-</idea-plugin>
+</consulo-plugin>

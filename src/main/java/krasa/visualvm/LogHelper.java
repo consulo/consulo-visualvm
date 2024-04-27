@@ -1,9 +1,9 @@
 package krasa.visualvm;
 
-import com.intellij.openapi.diagnostic.Logger;
+import consulo.logging.Logger;
 
 public class LogHelper {
-	private static final Logger log = Logger.getInstance(LogHelper.class.getName());
+	private static final Logger log = Logger.getInstance(LogHelper.class);
 
 	public static void print(String x, Object thisInstance) {
 		if (log.isDebugEnabled()) {

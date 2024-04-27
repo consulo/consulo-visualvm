@@ -1,39 +1,19 @@
 package krasa.visualvm.runner;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.JvmPatchableProgramRunner;
-import com.intellij.openapi.diagnostic.Logger;
-import krasa.visualvm.ApplicationSettingsService;
-import krasa.visualvm.Hacks;
-import krasa.visualvm.LogHelper;
+import com.intellij.java.execution.runners.JavaPatchableProgramRunner;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.logging.Logger;
+import consulo.process.ExecutionException;
 import krasa.visualvm.integration.VisualVMContext;
 import krasa.visualvm.integration.VisualVMHelper;
 
 public class RunnerUtils {
-	private static final Logger log = Logger.getInstance(RunnerUtils.class.getName());
+	private static final Logger log = Logger.getInstance(RunnerUtils.class);
 
-	static void runVisualVM(final JvmPatchableProgramRunner runner, ExecutionEnvironment env, RunProfileState state) throws ExecutionException {
+	static void runVisualVM(final JavaPatchableProgramRunner runner, ExecutionEnvironment env, RunProfileState state) throws ExecutionException {
 		try {
-			// tomcat uses PatchedLocalState
-			if (state.getClass().getSimpleName().equals(Hacks.BUNDLED_SERVERS_RUN_PROFILE_STATE)) {
-				LogHelper.print("#runVisualVM ExecutionEnvironment", runner);
-				new Thread() {
-					@Override
-					public void run() {
-						LogHelper.print("#Thread run", this);
-						try {
-							Thread.sleep(ApplicationSettingsService.getInstance().getState().getDelayForVisualVMStartAsLong());
-							VisualVMHelper.startVisualVM(VisualVMContext.load(), env.getProject(), runner);
-						} catch (Throwable e) {
-							log.error(e);
-						}
-					}
-				}.start();
-			} else {
-				VisualVMHelper.startVisualVM(VisualVMContext.load(), env.getProject(), runner);
-			}
+			VisualVMHelper.startVisualVM(VisualVMContext.load(), env.getProject(), runner);
 		} catch (Throwable e) {
 			log.error(e);
 		}

@@ -1,24 +1,26 @@
 package krasa.visualvm.runner;
 
-import com.intellij.debugger.impl.GenericDebuggerRunner;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.ModuleRunProfile;
-import com.intellij.execution.configurations.RemoteConnection;
-import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.jar.JarApplicationConfiguration;
-import com.intellij.execution.remote.RemoteConfiguration;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.java.debugger.impl.GenericDebuggerRunner;
+import com.intellij.java.execution.configurations.RemoteConnection;
+import com.intellij.java.execution.impl.jar.JarApplicationConfiguration;
+import com.intellij.java.execution.impl.remote.RemoteConfiguration;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.configuration.ModuleRunProfile;
+import consulo.execution.configuration.RunProfile;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.execution.ui.RunContentDescriptor;
+import consulo.logging.Logger;
+import consulo.process.ExecutionException;
 import krasa.visualvm.LogHelper;
 import krasa.visualvm.MyConfigurable;
 import krasa.visualvm.executor.DebugVisualVMExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@ExtensionImpl
 public class DebugVisualVMRunner extends GenericDebuggerRunner {
-	private static final Logger log = Logger.getInstance(DebugVisualVMRunner.class.getName());
+	private static final Logger log = Logger.getInstance(DebugVisualVMRunner.class);
 
 	@NotNull
 	public String getRunnerId() {
@@ -26,8 +28,7 @@ public class DebugVisualVMRunner extends GenericDebuggerRunner {
 	}
 
 	@Override
-	public void execute(@NotNull final ExecutionEnvironment environment)
-			throws ExecutionException {
+	public void execute(@NotNull final ExecutionEnvironment environment) throws ExecutionException {
 		LogHelper.print("#execute", this);
 
 		boolean b = MyConfigurable.openSettingsIfNotConfigured(environment.getProject());

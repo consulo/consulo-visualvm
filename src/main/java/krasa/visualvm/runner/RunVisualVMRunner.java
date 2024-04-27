@@ -31,23 +31,24 @@
 
 package krasa.visualvm.runner;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.ModuleRunProfile;
-import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.impl.DefaultJavaProgramRunner;
-import com.intellij.execution.jar.JarApplicationConfiguration;
-import com.intellij.execution.remote.RemoteConfiguration;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.target.TargetEnvironmentAwareRunProfileState;
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.java.execution.impl.DefaultJavaProgramRunner;
+import com.intellij.java.execution.impl.jar.JarApplicationConfiguration;
+import com.intellij.java.execution.impl.remote.RemoteConfiguration;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.configuration.ModuleRunProfile;
+import consulo.execution.configuration.RunProfile;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.execution.ui.RunContentDescriptor;
+import consulo.logging.Logger;
+import consulo.process.ExecutionException;
 import krasa.visualvm.MyConfigurable;
 import krasa.visualvm.executor.RunVisualVMExecutor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.concurrency.Promise;
 
-public class RunVisualVMRunner extends DefaultJavaProgramRunner {
+@ExtensionImpl
+public class RunVisualVMRunner extends DefaultJavaProgramRunner
+{
 	private static final Logger log = Logger.getInstance(DebugVisualVMRunner.class.getName());
 
 	@NotNull
@@ -74,12 +75,5 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner {
 		RunContentDescriptor runContentDescriptor = super.doExecute(state, env);
 		RunnerUtils.runVisualVM(this, env, state);
 		return runContentDescriptor;
-	}
-
-	@Override
-	protected @NotNull Promise<RunContentDescriptor> doExecuteAsync(@NotNull TargetEnvironmentAwareRunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
-		Promise<RunContentDescriptor> runContentDescriptorPromise = super.doExecuteAsync(state, env);
-		RunnerUtils.runVisualVM(this, env, state);
-		return runContentDescriptorPromise;
 	}
 }

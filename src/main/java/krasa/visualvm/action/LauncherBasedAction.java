@@ -1,16 +1,15 @@
 package krasa.visualvm.action;
 
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.runners.ProcessProxyFactory;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
-
-import javax.swing.*;
+import com.intellij.java.execution.runners.ProcessProxyFactory;
+import consulo.process.ProcessHandler;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.action.Presentation;
+import consulo.ui.image.Image;
 
 public abstract class LauncherBasedAction extends MyDumbAwareAction {
 	protected final ProcessHandler myProcessHandler;
 
-	LauncherBasedAction(String text, String description, Icon icon, ProcessHandler processHandler) {
+	LauncherBasedAction(String text, String description, Image icon, ProcessHandler processHandler) {
 		super(text, description, icon);
 		myProcessHandler = processHandler;
 	}

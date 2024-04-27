@@ -1,11 +1,11 @@
 package krasa.visualvm.integration;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
+import consulo.logging.Logger;
+import consulo.module.Module;
 
 /*dirty, but works*/
 public class VisualVMContext {
-	private static final Logger log = Logger.getInstance(VisualVMContext.class.getName());
+	private static final Logger log = Logger.getInstance(VisualVMContext.class);
 	private static volatile VisualVMContext currentlyExecuted;
 
 	protected Long appId;

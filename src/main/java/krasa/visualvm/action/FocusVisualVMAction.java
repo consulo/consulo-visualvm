@@ -1,22 +1,21 @@
 package krasa.visualvm.action;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.util.NlsActions;
+import consulo.project.Project;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.image.Image;
+import jakarta.annotation.Nullable;
 import krasa.visualvm.integration.VisualVMHelper;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 public class FocusVisualVMAction extends MyDumbAwareAction {
 	public FocusVisualVMAction() {
 	}
 
-	public FocusVisualVMAction(@Nullable @NlsActions.ActionText String text, @Nullable @NlsActions.ActionDescription String description, @Nullable Icon icon) {
+	public FocusVisualVMAction(@Nullable String text, @Nullable String description, @Nullable Image icon) {
 		super(text, description, icon);
 	}
 
 	public void actionPerformed(AnActionEvent e) {
-		VisualVMHelper.executeVisualVM(e.getProject(),  "--window-to-front");
+		VisualVMHelper.executeVisualVM(e.getData(Project.KEY),  "--window-to-front");
 	}
 
 }

@@ -1,24 +1,24 @@
 package krasa.visualvm.action;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.Separator;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.java.language.projectRoots.JavaSdk;
+import consulo.content.bundle.Sdk;
+import consulo.content.bundle.SdkTable;
+import consulo.fileChooser.FileChooserDescriptor;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.fileChooser.IdeaFileChooser;
+import consulo.project.Project;
+import consulo.project.ProjectManager;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.action.AnSeparator;
+import consulo.ui.ex.action.DefaultActionGroup;
+import consulo.ui.ex.action.DumbAwareAction;
+import consulo.ui.ex.popup.JBPopupFactory;
+import consulo.ui.ex.popup.ListPopup;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
 import krasa.visualvm.ApplicationSettingsService;
 import krasa.visualvm.PluginSettings;
 import krasa.visualvm.integration.VisualVMHelper;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.InputEvent;
@@ -36,7 +36,7 @@ public class StartVisualVMMainToolbarAction extends MyDumbAwareAction {
 		DefaultActionGroup defaultActionGroup = new DefaultActionGroup();
 		defaultActionGroup.add(new MyDumbAwareAction("No JDK (system default)", null));
 //		defaultActionGroup.add(new FocusVisualVMAction("Focus VisualVM", null, null));
-		defaultActionGroup.add(new Separator());
+		defaultActionGroup.add(new AnSeparator());
 
 		Set<String> homes = jdkHomes();
 
@@ -58,13 +58,13 @@ public class StartVisualVMMainToolbarAction extends MyDumbAwareAction {
 
 		PluginSettings state = ApplicationSettingsService.getInstance().getState();
 		String configuredJdkHome = state.getJdkHome();
-		if (StringUtils.isNotBlank(configuredJdkHome)) {
+		if (!StringUtil.isEmptyOrSpaces(configuredJdkHome)) {
 			homes.add(configuredJdkHome);
 		}
 
-		ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
+		SdkTable sdkTable = SdkTable.getInstance();
 		JavaSdk javaSdk = JavaSdk.getInstance();
-		for (Sdk sdk : projectJdkTable.getAllJdks()) {
+		for (Sdk sdk : sdkTable.getAllSdks()) {
 			if (sdk.getSdkType() == javaSdk) {
 				homes.add(sdk.getHomePath());
 			}
@@ -75,13 +75,13 @@ public class StartVisualVMMainToolbarAction extends MyDumbAwareAction {
 	private boolean checkVisualVmExecutable() {
 		PluginSettings state = ApplicationSettingsService.getInstance().getState();
 		String visualVmPath = state.getVisualVmExecutable();
-		if (org.apache.commons.lang.StringUtils.isBlank(visualVmPath)) {
+		if (StringUtil.isEmptyOrSpaces(visualVmPath)) {
 			final FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
 			descriptor.setHideIgnored(true);
 
 			descriptor.setTitle("Select VisualVM Executable");
 			Project defaultProject = ProjectManager.getInstance().getDefaultProject();
-			VirtualFile virtualFile = FileChooser.chooseFile(descriptor, defaultProject, null);
+			VirtualFile virtualFile = IdeaFileChooser.chooseFile(descriptor, defaultProject, null);
 			if (virtualFile != null) {
 				String path = virtualFile.getPath();
 				state.setVisualVmExecutable(path);
@@ -93,7 +93,8 @@ public class StartVisualVMMainToolbarAction extends MyDumbAwareAction {
 	}
 
 
-	private static class MyDumbAwareAction extends DumbAwareAction {
+	private static class MyDumbAwareAction extends DumbAwareAction
+	{
 		private final String homePath;
 
 		public MyDumbAwareAction(String name, String homePath) {
@@ -103,7 +104,7 @@ public class StartVisualVMMainToolbarAction extends MyDumbAwareAction {
 
 		@Override
 		public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-			VisualVMHelper.startVisualVM(anActionEvent.getProject(), homePath);
+			VisualVMHelper.startVisualVM(anActionEvent.getData(Project.KEY), homePath);
 		}
 	}
 }

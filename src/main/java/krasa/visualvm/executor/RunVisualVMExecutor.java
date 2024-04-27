@@ -1,13 +1,12 @@
 package krasa.visualvm.executor;
 
-import javax.swing.*;
-
-import krasa.visualvm.Resources;
-
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.executor.DefaultRunExecutor;
+import consulo.ui.image.Image;
+import consulo.visualvm.icon.VisualVMIconGroup;
 import org.jetbrains.annotations.NotNull;
 
-import com.intellij.execution.executors.DefaultRunExecutor;
-
+@ExtensionImpl(id = "visualVmExecutor", order = "before debugVisualVmExecutor, after run")
 public class RunVisualVMExecutor extends DefaultRunExecutor {
 
 	public static final String RUN_WITH_VISUAL_VM = "Run with VisualVM";
@@ -18,16 +17,16 @@ public class RunVisualVMExecutor extends DefaultRunExecutor {
 		return getId();
 	}
 
-	public Icon getToolWindowIcon() {
-		return Resources.RUN_13;
+	public Image getToolWindowIcon() {
+		return VisualVMIconGroup.run16();
 	}
 
 	@NotNull
-	public Icon getIcon() {
-		return Resources.RUN;
+	public Image getIcon() {
+		return VisualVMIconGroup.run16();
 	}
 
-	public Icon getDisabledIcon() {
+	public Image getDisabledIcon() {
 		return null;
 	}
 

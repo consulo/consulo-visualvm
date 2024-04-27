@@ -1,5 +1,1 @@
-# VisualVMLauncher
-
-IntelliJ plugin - https://plugins.jetbrains.com/plugin/7115-visualvm-launcher/
-
----
+[![Build Status](https://ci.consulo.io/job/consulo-visualvm/badge/icon)](https://ci.consulo.io/job/consulo-visualvm)
