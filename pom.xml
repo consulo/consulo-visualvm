@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright 2013-2017 consulo.io
+  - Copyright 2013-2024 consulo.io
   -
   - Licensed under the Apache License, Version 2.0 (the "License");
   - you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
 	</parent>
 
 	<groupId>consulo.plugin</groupId>
-	<artifactId>com.intellij.spring</artifactId>
+	<artifactId>consulo.visualvm</artifactId>
 	<version>3-SNAPSHOT</version>
 	<packaging>consulo-plugin</packaging>
 
