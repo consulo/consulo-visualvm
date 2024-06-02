@@ -1,6 +1,6 @@
 package krasa.visualvm.action;
 
-import com.intellij.java.language.projectRoots.JavaSdk;
+import com.intellij.java.language.projectRoots.JavaSdkType;
 import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkTable;
 import consulo.fileChooser.FileChooserDescriptor;
@@ -63,9 +63,8 @@ public class StartVisualVMMainToolbarAction extends MyDumbAwareAction {
 		}
 
 		SdkTable sdkTable = SdkTable.getInstance();
-		JavaSdk javaSdk = JavaSdk.getInstance();
 		for (Sdk sdk : sdkTable.getAllSdks()) {
-			if (sdk.getSdkType() == javaSdk) {
+			if (sdk.getSdkType() instanceof JavaSdkType) {
 				homes.add(sdk.getHomePath());
 			}
 		}

@@ -1,6 +1,6 @@
 package krasa.visualvm;
 
-import com.intellij.java.language.projectRoots.JavaSdk;
+import com.intellij.java.language.projectRoots.JavaSdkType;
 import consulo.fileChooser.FileChooserDescriptor;
 import consulo.fileChooser.FileChooserDescriptorFactory;
 import consulo.fileChooser.IdeaFileChooser;
@@ -14,12 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.NumberFormat;
 import java.util.Collection;
 
 public class SettingsDialog
@@ -40,7 +37,7 @@ public class SettingsDialog
 	{
 		browseButton.addActionListener(e -> browseForFile(visualVmExecutable));
 		browseJdkHome.addActionListener(e -> {
-			JavaSdk javaSdk = JavaSdk.getInstance();
+			JavaSdkType javaSdk = JavaSdkType.getDefaultJavaSdkType();
 
 			String text = jdkHome.getText();
 			Collection<String> paths = javaSdk.suggestHomePaths();
