@@ -49,15 +49,14 @@ import org.jetbrains.annotations.NotNull;
 @ExtensionImpl
 public class RunVisualVMRunner extends DefaultJavaProgramRunner
 {
-	private static final Logger log = Logger.getInstance(DebugVisualVMRunner.class.getName());
-
+	@Override
 	@NotNull
 	public String getRunnerId() {
-		return RunVisualVMExecutor.RUN_WITH_VISUAL_VM;
+		return RunVisualVMExecutor.EXECUTOR_ID;
 	}
 
 	public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-		return executorId.equals(RunVisualVMExecutor.RUN_WITH_VISUAL_VM) && (profile instanceof ModuleRunProfile || profile instanceof JarApplicationConfiguration) && !(profile instanceof RemoteConfiguration);
+		return executorId.equals(RunVisualVMExecutor.EXECUTOR_ID) && (profile instanceof ModuleRunProfile || profile instanceof JarApplicationConfiguration) && !(profile instanceof RemoteConfiguration);
 	}
 
 	@Override
