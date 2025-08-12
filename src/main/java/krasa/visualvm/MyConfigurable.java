@@ -4,6 +4,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.ApplicationConfigurable;
 import consulo.configurable.ConfigurationException;
 import consulo.configurable.StandardConfigurableIds;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import jakarta.annotation.Nonnull;
 import org.jetbrains.annotations.Nls;
@@ -29,9 +30,9 @@ public class MyConfigurable implements ApplicationConfigurable
 	}
 
 	@Nls
-	public String getDisplayName()
+	public LocalizeValue getDisplayName()
 	{
-		return "VisualVM Launcher";
+		return LocalizeValue.localizeTODO("VisualVM Launcher");
 	}
 
 	@Nonnull
