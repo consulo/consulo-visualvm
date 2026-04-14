@@ -6,7 +6,7 @@ import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
-import consulo.ide.ServiceManager;
+import consulo.application.Application;
 import consulo.logging.Logger;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public class ApplicationSettingsService implements PersistentStateComponent<Plug
 
 	public static ApplicationSettingsService getInstance()
 	{
-		return ServiceManager.getService(ApplicationSettingsService.class);
+		return Application.get().getInstance(ApplicationSettingsService.class);
 	}
 
 	@NotNull

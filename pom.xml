@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>consulo</groupId>
-        <artifactId>arch.ide-api-provided</artifactId>
+        <artifactId>arch.bind.java</artifactId>
         <version>3-SNAPSHOT</version>
         <relativePath/>
     </parent>
@@ -79,6 +79,21 @@
     </build>
 
     <dependencies>
+        <!-- platform (required transitively by consulo.java.execution.impl / consulo.java.debugger.impl) -->
+        <dependency>
+            <groupId>consulo</groupId>
+            <artifactId>consulo-ide-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>consulo</groupId>
+            <artifactId>consulo-configurable-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- java -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>consulo.java</artifactId>

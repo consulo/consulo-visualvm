@@ -3,8 +3,14 @@
  * @since 2024-04-27
  */
 open module consulo.visualvm {
-	requires consulo.ide.api;
+	// platform
+	requires consulo.execution.api;
+	requires consulo.configurable.api;
+	requires consulo.project.ui.api;
+	requires consulo.ui.ex.api;
+	requires consulo.file.editor.api;
 
+	// java
 	requires consulo.java.language.api;
 	requires consulo.java.execution.api;
 	requires consulo.java.execution.impl;
