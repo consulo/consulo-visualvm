@@ -24,222 +24,234 @@ import java.util.*;
 
 public class SourceRoots {
 
-	@NotNull
-	static String resolve(Project project, Module runConfigurationModule) {
-		//https://visualvm.github.io/sourcessupport.html
-		// --source-roots="c:\sources\root1;c:\sources\root2[subpaths=src:test\src]"
+    @NotNull
+    static String resolve(Project project, Module runConfigurationModule) {
+        //https://visualvm.github.io/sourcessupport.html
+        // --source-roots="c:\sources\root1;c:\sources\root2[subpaths=src:test\src]"
 
-		SourceRoots sourceRoots = new SourceRoots();
+        SourceRoots sourceRoots = new SourceRoots();
 
-		if (runConfigurationModule != null) {
-			sourceRoots.addModuleDependencies(runConfigurationModule);
-		} else {
-			ModuleManager manager = ModuleManager.getInstance(project);
-			Module[] modules = manager.getModules();
-			for (Module module : modules) {
-				sourceRoots.addModuleDependencies(module);
-			}
-		}
+        if (runConfigurationModule != null) {
+            sourceRoots.addModuleDependencies(runConfigurationModule);
+        }
+        else {
+            ModuleManager manager = ModuleManager.getInstance(project);
+            Module[] modules = manager.getModules();
+            for (Module module : modules) {
+                sourceRoots.addModuleDependencies(module);
+            }
+        }
 
-		return sourceRoots.getVisualVmParameter();
-	}
-
-
-	private MultiMap<String, String> jarsWithSubpaths = new MultiMap<>();
-	private Set<String> jars = new HashSet<>();
-	private Set<ModuleContentRoots> moduleContentRoots = new HashSet<>();
-
-	private Set<Module> cycleProtection = new HashSet<>();
-
-	private void addModuleDependencies(Module module) {
-		if (cycleProtection.contains(module)) {
-			return;
-		} else {
-			cycleProtection.add(module);
-		}
-
-		ModuleRootManager root = ModuleRootManager.getInstance(module);
-		OrderEntry[] orderEntries = root.getOrderEntries();
-		for (OrderEntry orderEntry : orderEntries) {
-			if (orderEntry instanceof ModuleOrderEntry) {
-				Module moduleDep = ((ModuleOrderEntry) orderEntry).getModule();
-				addModule(moduleDep);
-				addModuleDependencies(moduleDep);
-			} else if (orderEntry instanceof ModuleSourceOrderEntry) {
-				Module module1 = ((ModuleSourceOrderEntry) orderEntry).getRootModel().getModule();
-				addModule(module1);
-			} else {
-				//				if (orderEntry instanceof LibraryOrderEntry || orderEntry instanceof InheritedJdkOrderEntry) {
-				//
-				//				} else {
-				//					System.err.println();
-				//				}
-				VirtualFile[] sources = orderEntry.getFiles(SourcesOrderRootType.getInstance());
-				for (VirtualFile virtualFile : sources) {
-					add(virtualFile);
-				}
-			}
-
-		}
-	}
-
-	public void add(VirtualFile root) {
-		String path = root.getPath();
-		if (path.contains("!/")) {
-			String jar = StringUtil.substringBefore(path, "!/");
-			String subpath = StringUtil.substringAfter(path, "!/");
-			jarsWithSubpaths.putValue(jar, subpath);
-		} else {
-			jars.add(path);
-		}
-	}
-
-	public void addModule(Module module) {
-		ModuleRootManager root = ModuleRootManager.getInstance(module);
-		ContentEntry[] contentEntries = root.getContentEntries();
-		for (ContentEntry contentEntry : contentEntries) {
-			moduleContentRoots.add(new ModuleContentRoots(contentEntry));
-		}
-	}
-
-	public String getVisualVmParameter() {
-		StringBuilder sb = new StringBuilder();
-		for (ModuleContentRoots sourceRoot : moduleContentRoots) {
-			sourceRoot.appendTo(sb);
-		}
-
-		for (String jar : jars) {
-			sb.append(jar);
-			sb.append(File.pathSeparator);
-		}
-
-		for (Map.Entry<String, Collection<String>> stringCollectionEntry : jarsWithSubpaths.entrySet()) {
-			String key = stringCollectionEntry.getKey();
-			Collection<String> value = stringCollectionEntry.getValue();
-			appendTo(sb, key, new HashSet<>(value));
-		}
+        return sourceRoots.getVisualVmParameter();
+    }
 
 
-		String sourceRootsText = removeLastSeparator(sb.toString());
-		if (SystemInfo.isWindows) {
-			sourceRootsText = sourceRootsText.replace("/", "\\");
-		}
-		return sourceRootsText;
-	}
+    private MultiMap<String, String> jarsWithSubpaths = new MultiMap<>();
+    private Set<String> jars = new HashSet<>();
+    private Set<ModuleContentRoots> moduleContentRoots = new HashSet<>();
+
+    private Set<Module> cycleProtection = new HashSet<>();
+
+    private void addModuleDependencies(Module module) {
+        if (cycleProtection.contains(module)) {
+            return;
+        }
+        else {
+            cycleProtection.add(module);
+        }
+
+        ModuleRootManager root = ModuleRootManager.getInstance(module);
+        OrderEntry[] orderEntries = root.getOrderEntries();
+        for (OrderEntry orderEntry : orderEntries) {
+            if (orderEntry instanceof ModuleOrderEntry) {
+                Module moduleDep = ((ModuleOrderEntry) orderEntry).getModule();
+                addModule(moduleDep);
+                addModuleDependencies(moduleDep);
+            }
+            else if (orderEntry instanceof ModuleSourceOrderEntry) {
+                Module module1 = ((ModuleSourceOrderEntry) orderEntry).getRootModel().getModule();
+                addModule(module1);
+            }
+            else {
+                //				if (orderEntry instanceof LibraryOrderEntry || orderEntry instanceof InheritedJdkOrderEntry) {
+                //
+                //				} else {
+                //					System.err.println();
+                //				}
+                VirtualFile[] sources = orderEntry.getFiles(SourcesOrderRootType.ID);
+                for (VirtualFile virtualFile : sources) {
+                    add(virtualFile);
+                }
+            }
+
+        }
+    }
+
+    public void add(VirtualFile root) {
+        String path = root.getPath();
+        if (path.contains("!/")) {
+            String jar = StringUtil.substringBefore(path, "!/");
+            String subpath = StringUtil.substringAfter(path, "!/");
+            jarsWithSubpaths.putValue(jar, subpath);
+        }
+        else {
+            jars.add(path);
+        }
+    }
+
+    public void addModule(Module module) {
+        ModuleRootManager root = ModuleRootManager.getInstance(module);
+        ContentEntry[] contentEntries = root.getContentEntries();
+        for (ContentEntry contentEntry : contentEntries) {
+            moduleContentRoots.add(new ModuleContentRoots(contentEntry));
+        }
+    }
+
+    public String getVisualVmParameter() {
+        StringBuilder sb = new StringBuilder();
+        for (ModuleContentRoots sourceRoot : moduleContentRoots) {
+            sourceRoot.appendTo(sb);
+        }
+
+        for (String jar : jars) {
+            sb.append(jar);
+            sb.append(File.pathSeparator);
+        }
+
+        for (Map.Entry<String, Collection<String>> stringCollectionEntry : jarsWithSubpaths.entrySet()) {
+            String key = stringCollectionEntry.getKey();
+            Collection<String> value = stringCollectionEntry.getValue();
+            appendTo(sb, key, new HashSet<>(value));
+        }
 
 
-	private void appendTo(StringBuilder sb, String key, Set<String> subpaths) {
-		subpaths.remove("");
-
-		if (subpaths.isEmpty()) {
-			sb.append(key);
-		} else {
-			sb.append(key);
-
-			sb.append("[subpaths=");
-			for (String s : subpaths) {
-				sb.append(s);
-				sb.append(":");
-			}
-			removeLastSeparator(sb, ":");
-			sb.append("]");
-		}
-		sb.append(File.pathSeparator);
-	}
+        String sourceRootsText = removeLastSeparator(sb.toString());
+        if (SystemInfo.isWindows) {
+            sourceRootsText = sourceRootsText.replace("/", "\\");
+        }
+        return sourceRootsText;
+    }
 
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder("Dependencies{" +
-			"map=\n");
+    private void appendTo(StringBuilder sb, String key, Set<String> subpaths) {
+        subpaths.remove("");
 
-		sb.append("\nsourceRoot=");
-		for (ModuleContentRoots sourceRoot : moduleContentRoots) {
-			sb.append("\n\t-");
-			sourceRoot.appendTo(sb);
-		}
+        if (subpaths.isEmpty()) {
+            sb.append(key);
+        }
+        else {
+            sb.append(key);
 
-		for (Map.Entry<String, Collection<String>> stringCollectionEntry : jarsWithSubpaths.entrySet()) {
-			sb.append("\n")
-				.append(stringCollectionEntry.getKey());
-			Collection<String> value = stringCollectionEntry.getValue();
-			HashSet<String> strings = new HashSet<>(value);
-			strings.remove("");
-			for (String s : strings) {
-				sb.append("\n\t-").append(s);
-			}
-		}
-		sb.append("\njars=");
-		for (String jar : jars) {
-			sb.append("\n\t-").append(jar);
-		}
+            sb.append("[subpaths=");
+            for (String s : subpaths) {
+                sb.append(s);
+                sb.append(":");
+            }
+            removeLastSeparator(sb, ":");
+            sb.append("]");
+        }
+        sb.append(File.pathSeparator);
+    }
 
-		return sb.toString();
-	}
 
-	private static class ModuleContentRoots {
-		private final ContentEntry contentEntry;
-		private final VirtualFile contentEntryFile;
-		private final List<VirtualFile> paths = new ArrayList<>();
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Dependencies{" +
+            "map=\n");
 
-		public ModuleContentRoots(ContentEntry contentEntry) {
-			this.contentEntry = contentEntry;
-			contentEntryFile = contentEntry.getFile();
+        sb.append("\nsourceRoot=");
+        for (ModuleContentRoots sourceRoot : moduleContentRoots) {
+            sb.append("\n\t-");
+            sourceRoot.appendTo(sb);
+        }
 
-			ContentFolder[] sourceFolders = contentEntry.getFolders(LanguageContentFolderScopes.of(ProductionContentFolderTypeProvider.getInstance()));
-			for (ContentFolder sourceFolder : sourceFolders) {
-				VirtualFile file = sourceFolder.getFile();
-				if (file != null) {
-					paths.add(file);
-				}
-			}
-		}
+        for (Map.Entry<String, Collection<String>> stringCollectionEntry : jarsWithSubpaths.entrySet()) {
+            sb.append("\n")
+                .append(stringCollectionEntry.getKey());
+            Collection<String> value = stringCollectionEntry.getValue();
+            HashSet<String> strings = new HashSet<>(value);
+            strings.remove("");
+            for (String s : strings) {
+                sb.append("\n\t-").append(s);
+            }
+        }
+        sb.append("\njars=");
+        for (String jar : jars) {
+            sb.append("\n\t-").append(jar);
+        }
 
-		public void appendTo(StringBuilder sb) {
-			if (paths.isEmpty()) {
-				return;
-			} else if (paths.size() == 1) {
-				sb.append(paths.get(0).getPath());
-			} else {
-				sb.append(contentEntryFile.getPath());
-				sb.append("[subpaths=");
-				for (VirtualFile file : paths) {
-					sb.append(VirtualFileUtil.getRelativePath(file, contentEntryFile));
-					sb.append(":");
-				}
-				removeLastSeparator(sb, ":");
-				sb.append("]");
-			}
-			sb.append(File.pathSeparator);
-		}
+        return sb.toString();
+    }
 
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
+    private static class ModuleContentRoots {
+        private final ContentEntry contentEntry;
+        private final VirtualFile contentEntryFile;
+        private final List<VirtualFile> paths = new ArrayList<>();
 
-			ModuleContentRoots that = (ModuleContentRoots) o;
+        public ModuleContentRoots(ContentEntry contentEntry) {
+            this.contentEntry = contentEntry;
+            contentEntryFile = contentEntry.getFile();
 
-			return contentEntry != null ? contentEntry.equals(that.contentEntry) : that.contentEntry == null;
-		}
+            ContentFolder[] sourceFolders = contentEntry.getFolders(LanguageContentFolderScopes.of(ProductionContentFolderTypeProvider.getInstance()));
+            for (ContentFolder sourceFolder : sourceFolders) {
+                VirtualFile file = sourceFolder.getFile();
+                if (file != null) {
+                    paths.add(file);
+                }
+            }
+        }
 
-		@Override
-		public int hashCode() {
-			return contentEntry != null ? contentEntry.hashCode() : 0;
-		}
-	}
+        public void appendTo(StringBuilder sb) {
+            if (paths.isEmpty()) {
+                return;
+            }
+            else if (paths.size() == 1) {
+                sb.append(paths.get(0).getPath());
+            }
+            else {
+                sb.append(contentEntryFile.getPath());
+                sb.append("[subpaths=");
+                for (VirtualFile file : paths) {
+                    sb.append(VirtualFileUtil.getRelativePath(file, contentEntryFile));
+                    sb.append(":");
+                }
+                removeLastSeparator(sb, ":");
+                sb.append("]");
+            }
+            sb.append(File.pathSeparator);
+        }
 
-	private static String removeLastSeparator(String toString) {
-		if (toString.endsWith(File.pathSeparator)) {
-			return toString.substring(0, toString.length() - 1);
-		}
-		return toString;
-	}
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
-	private static void removeLastSeparator(StringBuilder sb, String suffix) {
-		if (sb.substring(sb.length() - 1).equals(suffix)) {
-			sb.setLength(sb.length() - 1);
-		}
-	}
+            ModuleContentRoots that = (ModuleContentRoots) o;
+
+            return contentEntry != null ? contentEntry.equals(that.contentEntry) : that.contentEntry == null;
+        }
+
+        @Override
+        public int hashCode() {
+            return contentEntry != null ? contentEntry.hashCode() : 0;
+        }
+    }
+
+    private static String removeLastSeparator(String toString) {
+        if (toString.endsWith(File.pathSeparator)) {
+            return toString.substring(0, toString.length() - 1);
+        }
+        return toString;
+    }
+
+    private static void removeLastSeparator(StringBuilder sb, String suffix) {
+        if (sb.substring(sb.length() - 1).equals(suffix)) {
+            sb.setLength(sb.length() - 1);
+        }
+    }
 
 }
