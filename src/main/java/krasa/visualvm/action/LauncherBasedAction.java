@@ -3,10 +3,11 @@ package krasa.visualvm.action;
 import com.intellij.java.execution.runners.ProcessProxyFactory;
 import consulo.process.ProcessHandler;
 import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.action.AnActionWithSyncUpdate;
 import consulo.ui.ex.action.Presentation;
 import consulo.ui.image.Image;
 
-public abstract class LauncherBasedAction extends MyDumbAwareAction {
+public abstract class LauncherBasedAction extends MyDumbAwareAction implements AnActionWithSyncUpdate {
 	protected final ProcessHandler myProcessHandler;
 
 	LauncherBasedAction(String text, String description, Image icon, ProcessHandler processHandler) {

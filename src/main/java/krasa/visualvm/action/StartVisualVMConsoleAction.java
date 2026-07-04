@@ -2,6 +2,7 @@ package krasa.visualvm.action;
 
 import consulo.project.Project;
 import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.action.AnActionWithSyncUpdate;
 import consulo.ui.ex.action.Presentation;
 import consulo.visualvm.icon.VisualVMIconGroup;
 import krasa.visualvm.LogHelper;
@@ -12,7 +13,7 @@ import krasa.visualvm.integration.VisualVMHelper;
 import java.util.LinkedList;
 import java.util.List;
 
-public class StartVisualVMConsoleAction extends MyDumbAwareAction {
+public class StartVisualVMConsoleAction extends MyDumbAwareAction implements AnActionWithSyncUpdate {
 	private VisualVMContext visualVMContext;
 	private boolean postConstructContextSet;
 	private long created;
@@ -32,7 +33,6 @@ public class StartVisualVMConsoleAction extends MyDumbAwareAction {
 
 	@Override
 	public void update(AnActionEvent e) {
-		super.update(e);
 		final Presentation presentation = e.getPresentation();
 		if (!VisualVMContext.isValid(visualVMContext)) {
 //			presentation.setVisible(false);
