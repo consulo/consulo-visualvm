@@ -24,7 +24,6 @@
  */
 package krasa.visualvm.integration;
 
-import consulo.application.ApplicationManager;
 import consulo.application.util.SystemInfo;
 import consulo.container.boot.ContainerPathManager;
 import consulo.logging.Logger;
@@ -34,7 +33,6 @@ import consulo.project.Project;
 import consulo.project.ui.notification.Notification;
 import consulo.project.ui.notification.NotificationGroup;
 import consulo.project.ui.notification.NotificationType;
-import consulo.project.ui.notification.Notifications;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 import consulo.visualvm.VisualVMNotificationGroupContributor;
@@ -53,173 +51,185 @@ import java.util.List;
 import java.util.Properties;
 
 public final class VisualVMHelper {
-	private static final Logger log = Logger.getInstance(VisualVMHelper.class);
+    private static final Logger log = Logger.getInstance(VisualVMHelper.class);
 
-	public static void startVisualVM(VisualVMContext vmContext, Project project, Object thisInstance) {
-		if (vmContext == null) {
-			log.warn("VisualVMContext is null");
-			return;
-		}
-		VisualVMHelper.openInVisualVM(vmContext.getAppId(), vmContext.getJdkPath(), vmContext.getModule(), project, thisInstance);
-	}
+    public static void startVisualVM(VisualVMContext vmContext, Project project, Object thisInstance) {
+        if (vmContext == null) {
+            log.warn("VisualVMContext is null");
+            return;
+        }
+        VisualVMHelper.openInVisualVM(vmContext.getAppId(), vmContext.getJdkPath(), vmContext.getModule(), project, thisInstance);
+    }
 
-	public static long getNextID() {
-		return System.nanoTime();
-	}
+    public static long getNextID() {
+        return System.nanoTime();
+    }
 
-	public static void startVisualVM(Project project, String jdkHome_doNotOverride) {
-		PluginSettings state = ApplicationSettingsService.getInstance().getState();
+    public static void startVisualVM(Project project, String jdkHome_doNotOverride) {
+        PluginSettings state = ApplicationSettingsService.getInstance().getState();
 
-		String visualVmPath = state.getVisualVmExecutable();
-		if (!isValidPath(visualVmPath)) {
-			NotificationGroup group = VisualVMNotificationGroupContributor.GROUP;
-			Notification notification = group.createNotification("Path to VisualVM is not valid, path='" + visualVmPath + "'", NotificationType.ERROR);
-			ApplicationManager.getApplication().invokeLater(() -> Notifications.Bus.notify(notification));
-		} else {
-			try {
-				if (StringUtil.isEmptyOrSpaces(jdkHome_doNotOverride)) {
-					new VisualVMProcess(project, visualVmPath).run();
-				} else {
-					new VisualVMProcess(project, visualVmPath, "--jdkhome", jdkHome_doNotOverride).run();
-				}
-			} catch (IOException e) {
-				throw new RuntimeException("visualVmPath=" + visualVmPath + "; jdkHome=" + jdkHome_doNotOverride, e);
-			}
-		}
+        String visualVmPath = state.getVisualVmExecutable();
+        if (!isValidPath(visualVmPath)) {
+            NotificationGroup group = VisualVMNotificationGroupContributor.GROUP;
+            Notification notification = group.createNotification("Path to VisualVM is not valid, path='" + visualVmPath + "'", NotificationType.ERROR);
+            notification.notify(project);
+        }
+        else {
+            try {
+                if (StringUtil.isEmptyOrSpaces(jdkHome_doNotOverride)) {
+                    new VisualVMProcess(project, visualVmPath).run();
+                }
+                else {
+                    new VisualVMProcess(project, visualVmPath, "--jdkhome", jdkHome_doNotOverride).run();
+                }
+            }
+            catch (IOException e) {
+                throw new RuntimeException("visualVmPath=" + visualVmPath + "; jdkHome=" + jdkHome_doNotOverride, e);
+            }
+        }
 
-	}
+    }
 
-	public static void openInVisualVM(long id, String jdkHome, Module module, Project project, Object thisInstance) {
-		PluginSettings pluginSettings = ApplicationSettingsService.getInstance().getState();
+    public static void openInVisualVM(long id, String jdkHome, Module module, Project project, Object thisInstance) {
+        PluginSettings pluginSettings = ApplicationSettingsService.getInstance().getState();
 
-		String visualVmPath = pluginSettings.getVisualVmExecutable();
-		String customJdkHome = pluginSettings.getJdkHome();
-		boolean useModuleJdk = pluginSettings.isUseModuleJdk();
-		boolean sourceConfig = pluginSettings.isSourceConfig();
+        String visualVmPath = pluginSettings.getVisualVmExecutable();
+        String customJdkHome = pluginSettings.getJdkHome();
+        boolean useModuleJdk = pluginSettings.isUseModuleJdk();
+        boolean sourceConfig = pluginSettings.isSourceConfig();
 
-		if (useModuleJdk) {
-			if (StringUtil.isEmptyOrSpaces(jdkHome)) {
-				jdkHome = customJdkHome;
-			}
-		} else {
-			jdkHome = customJdkHome;
-		}
+        if (useModuleJdk) {
+            if (StringUtil.isEmptyOrSpaces(jdkHome)) {
+                jdkHome = customJdkHome;
+            }
+        }
+        else {
+            jdkHome = customJdkHome;
+        }
 
-		String idString = String.valueOf(id);
-		if (pluginSettings.isUseTabIndex()) {
-			idString += "@" + pluginSettings.getTabIndex();
-		}
+        String idString = String.valueOf(id);
+        if (pluginSettings.isUseTabIndex()) {
+            idString += "@" + pluginSettings.getTabIndex();
+        }
 
-		if (!isValidPath(visualVmPath)) {
-			NotificationGroup group = VisualVMNotificationGroupContributor.GROUP;
-			Notification myNotification = group.createNotification("Path to VisualVM is not valid, path='" + visualVmPath + "'", NotificationType.ERROR);
-			ApplicationManager.getApplication().invokeLater(() -> Notifications.Bus.notify(myNotification));
-		} else {
-			run(jdkHome, project, visualVmPath, idString, sourceConfig, module, thisInstance);
-		}
-	}
+        if (!isValidPath(visualVmPath)) {
+            NotificationGroup group = VisualVMNotificationGroupContributor.GROUP;
+            Notification myNotification = group.createNotification("Path to VisualVM is not valid, path='" + visualVmPath + "'", NotificationType.ERROR);
+            myNotification.notify(project);
+        }
+        else {
+            run(jdkHome, project, visualVmPath, idString, sourceConfig, module, thisInstance);
+        }
+    }
 
-	private static void run(String jdkHome, Project project, String visualVmPath, String idString, boolean sourceConfig, Module module, Object thisInstance) {
-		LogHelper.print("starting VisualVM with id=" + idString, thisInstance);
-		List<String> cmds = new ArrayList<>();
-		try {
-			cmds.add(visualVmPath);
-			if (!StringUtil.isEmptyOrSpaces(jdkHome)) {
-				cmds.add("--jdkhome");
-				cmds.add(jdkHome);
-			}
-			cmds.add("--openid");
-			cmds.add(idString);
-			if (sourceConfig) {
-				try {
-					cmds.add("--source-config");
-					cmds.add(createSourceConfig(project, module).getAbsolutePath());
-				} catch (Throwable e) {
-					log.error(e);
-				}
-			}
-			new VisualVMProcess(project, cmds.toArray(new String[0])).run();
-		} catch (IOException e) {
-			if (sourceConfig) {
-				boolean contains = e.getMessage().contains("The filename or extension is too long");
-				if (contains) {
-					log.error("Please disable 'Integrate with VisualVM-GoToSource plugin' option at 'File | Settings | Other Settings | VisualVM Launcher'.\nThe command was too long: " + cmds.toString().length(), e);
-					run(jdkHome, project, visualVmPath, idString, false, module, thisInstance);
-					return;
-				}
-			}
-			throw new RuntimeException(cmds.toString(), e);
-		}
-	}
+    private static void run(String jdkHome, Project project, String visualVmPath, String idString, boolean sourceConfig, Module module, Object thisInstance) {
+        LogHelper.print("starting VisualVM with id=" + idString, thisInstance);
+        List<String> cmds = new ArrayList<>();
+        try {
+            cmds.add(visualVmPath);
+            if (!StringUtil.isEmptyOrSpaces(jdkHome)) {
+                cmds.add("--jdkhome");
+                cmds.add(jdkHome);
+            }
+            cmds.add("--openid");
+            cmds.add(idString);
+            if (sourceConfig) {
+                try {
+                    cmds.add("--source-config");
+                    cmds.add(createSourceConfig(project, module).getAbsolutePath());
+                }
+                catch (Throwable e) {
+                    log.error(e);
+                }
+            }
+            new VisualVMProcess(project, cmds.toArray(new String[0])).run();
+        }
+        catch (IOException e) {
+            if (sourceConfig) {
+                boolean contains = e.getMessage().contains("The filename or extension is too long");
+                if (contains) {
+                    log.error("Please disable 'Integrate with VisualVM-GoToSource plugin' option at 'File | Settings | Other Settings | VisualVM Launcher'.\nThe command was too long: " + cmds.toString().length(), e);
+                    run(jdkHome, project, visualVmPath, idString, false, module, thisInstance);
+                    return;
+                }
+            }
+            throw new RuntimeException(cmds.toString(), e);
+        }
+    }
 
-	@NotNull
-	private static File createSourceConfig(Project project, Module runConfigurationModule) throws IOException {
-		Properties props = new Properties();
-		props.setProperty("source-roots", SourceRoots.resolve(project, runConfigurationModule));
+    @NotNull
+    private static File createSourceConfig(Project project, Module runConfigurationModule) throws IOException {
+        Properties props = new Properties();
+        props.setProperty("source-roots", SourceRoots.resolve(project, runConfigurationModule));
 
-		File ideExecutable = getIdeExecutable();
-		if (ideExecutable != null) {
-			if (ideExecutable.exists()) {
-				props.setProperty("source-viewer", "\"" + ideExecutable.getAbsolutePath() + "\" --line {line} {file}");
-			} else {
-				log.warn("Bin file not exists: " + ideExecutable.getAbsolutePath());
-			}
-		}
+        File ideExecutable = getIdeExecutable();
+        if (ideExecutable != null) {
+            if (ideExecutable.exists()) {
+                props.setProperty("source-viewer", "\"" + ideExecutable.getAbsolutePath() + "\" --line {line} {file}");
+            }
+            else {
+                log.warn("Bin file not exists: " + ideExecutable.getAbsolutePath());
+            }
+        }
 
-		File tempFile = FileUtil.createTempFile("visualVmConfig", ".properties");
-		try (OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(tempFile), "UTF-8")) {
-			props.store(osw, null);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return tempFile;
-	}
-
-
-	protected static File getIdeExecutable() {
-		File file = ContainerPathManager.get().getAppHomeDirectory();
-		if (SystemInfo.isWindows) {
-			String bits = Platform.current().jvm().isAny64Bit() ? "64" : "";
-			return new File(file, "consulo" + bits + ".exe");
-		} else if (SystemInfo.isMac) {
-			File appDir = new File(file, "MacOS");
-			return new File(appDir, "consulo");
-		} else if (SystemInfo.isUnix) {
-			return new File(file, "consulo.sh");
-		} else {
-			log.error("invalid OS: " + System.getProperty("os.name"));
-			return null;
-		}
-	}
-
-	public static boolean isValidPath(String visualVmPath) {
-		return !StringUtil.isEmptyOrSpaces(visualVmPath) && new File(visualVmPath).exists();
-	}
+        File tempFile = FileUtil.createTempFile("visualVmConfig", ".properties");
+        try (OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(tempFile), "UTF-8")) {
+            props.store(osw, null);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return tempFile;
+    }
 
 
-	static class VisualVMProcess {
+    protected static File getIdeExecutable() {
+        File file = ContainerPathManager.get().getAppHomeDirectory();
+        if (SystemInfo.isWindows) {
+            String bits = Platform.current().jvm().isAny64Bit() ? "64" : "";
+            return new File(file, "consulo" + bits + ".exe");
+        }
+        else if (SystemInfo.isMac) {
+            File appDir = new File(file, "MacOS");
+            return new File(appDir, "consulo");
+        }
+        else if (SystemInfo.isUnix) {
+            return new File(file, "consulo.sh");
+        }
+        else {
+            log.error("invalid OS: " + System.getProperty("os.name"));
+            return null;
+        }
+    }
 
-		private final Project project;
-		private final String[] cmds;
+    public static boolean isValidPath(String visualVmPath) {
+        return !StringUtil.isEmptyOrSpaces(visualVmPath) && new File(visualVmPath).exists();
+    }
 
-		public VisualVMProcess(Project project, String... cmds) {
-			this.project = project;
-			this.cmds = cmds;
-		}
 
-		public void run() throws IOException {
-			PluginSettings settings = ApplicationSettingsService.getInstance().getState();
+    static class VisualVMProcess {
 
-			List<String> cmd = new ArrayList<>(Arrays.asList(cmds));
-			if (!StringUtil.isEmptyOrSpaces(settings.getLaf())) {
-				cmd.add("--laf");
-				cmd.add(settings.getLaf());
-			}
+        private final Project project;
+        private final String[] cmds;
 
-			log.info("Starting VisualVM with parameters:" + cmd);
+        public VisualVMProcess(Project project, String... cmds) {
+            this.project = project;
+            this.cmds = cmds;
+        }
 
-			ProcessBuilder processBuilder = new ProcessBuilder(cmd);
-			//todo does not work
+        public void run() throws IOException {
+            PluginSettings settings = ApplicationSettingsService.getInstance().getState();
+
+            List<String> cmd = new ArrayList<>(Arrays.asList(cmds));
+            if (!StringUtil.isEmptyOrSpaces(settings.getLaf())) {
+                cmd.add("--laf");
+                cmd.add(settings.getLaf());
+            }
+
+            log.info("Starting VisualVM with parameters:" + cmd);
+
+            ProcessBuilder processBuilder = new ProcessBuilder(cmd);
+            //todo does not work
 //			if (disableProcessDialog) {
 //				File file = new File(PathManager.getLogPath(), "visualVMLauncher.log");
 //				file.createNewFile();
@@ -228,11 +238,11 @@ public final class VisualVMHelper {
 //					processBuilder.redirectOutput(file);
 //				}
 ////			}
-			Process process = processBuilder.start();
+            Process process = processBuilder.start();
 //			if (!disableProcessDialog) {
 //				process.toHandle().onExit().whenCompleteAsync((processHandle, throwable) -> accept(project, process, processHandle, throwable));
 //			}
-		}
+        }
 
 //		private static void accept(Project project, Process process, ProcessHandle processHandle, Throwable throwable) {
 //			try {
@@ -253,23 +263,25 @@ public final class VisualVMHelper {
 //			}
 //		}
 
-	}
+    }
 
-	public static void executeVisualVM(Project project, @NotNull String commandLineAction) {
-		PluginSettings state = ApplicationSettingsService.getInstance().getState();
+    public static void executeVisualVM(Project project, @NotNull String commandLineAction) {
+        PluginSettings state = ApplicationSettingsService.getInstance().getState();
 //todo needs sdk
-		String visualVmPath = state.getVisualVmExecutable();
-		if (!isValidPath(visualVmPath)) {
-			NotificationGroup group = VisualVMNotificationGroupContributor.GROUP;
-			Notification notification = group.createNotification("Path to VisualVM is not valid, path='" + visualVmPath + "'", NotificationType.ERROR);
-			ApplicationManager.getApplication().invokeLater(() -> Notifications.Bus.notify(notification));
-		} else {
-			try {
-				new VisualVMProcess(project, visualVmPath, commandLineAction).run();
-			} catch (IOException e) {
-				throw new RuntimeException("visualVmPath=" + visualVmPath + "; commandLineAction=" + commandLineAction, e);
-			}
-		}
+        String visualVmPath = state.getVisualVmExecutable();
+        if (!isValidPath(visualVmPath)) {
+            NotificationGroup group = VisualVMNotificationGroupContributor.GROUP;
+            Notification notification = group.createNotification("Path to VisualVM is not valid, path='" + visualVmPath + "'", NotificationType.ERROR);
+            notification.notify(project);
+        }
+        else {
+            try {
+                new VisualVMProcess(project, visualVmPath, commandLineAction).run();
+            }
+            catch (IOException e) {
+                throw new RuntimeException("visualVmPath=" + visualVmPath + "; commandLineAction=" + commandLineAction, e);
+            }
+        }
 
-	}
+    }
 }
