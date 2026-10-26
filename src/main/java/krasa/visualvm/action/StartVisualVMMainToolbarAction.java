@@ -5,9 +5,8 @@ import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkTable;
 import consulo.fileChooser.FileChooserDescriptor;
 import consulo.fileChooser.FileChooserDescriptorFactory;
-import consulo.fileChooser.IdeaFileChooser;
+import consulo.fileChooser.FileChooserFactory;
 import consulo.project.Project;
-import consulo.project.ProjectManager;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.action.AnSeparator;
 import consulo.ui.ex.action.DefaultActionGroup;
@@ -15,12 +14,14 @@ import consulo.ui.ex.action.DumbAwareAction;
 import consulo.ui.ex.popup.JBPopupFactory;
 import consulo.ui.ex.popup.ListPopup;
 import consulo.util.lang.StringUtil;
-import consulo.virtualFileSystem.VirtualFile;
+import consulo.dataContext.DataContext;
+import consulo.util.io.FileUtil;
 import krasa.visualvm.ApplicationSettingsService;
 import krasa.visualvm.PluginSettings;
 import krasa.visualvm.integration.VisualVMHelper;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.Component;
 import java.awt.event.InputEvent;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,11 +29,29 @@ import java.util.Set;
 public class StartVisualVMMainToolbarAction extends MyDumbAwareAction {
 
 	public void actionPerformed(AnActionEvent e) {
-		boolean ok = checkVisualVmExecutable();
-		if (!ok) {
+		DataContext dataContext = e.getDataContext();
+		InputEvent inputEvent = e.getInputEvent();
+		Component component = inputEvent == null ? null : inputEvent.getComponent();
+
+		PluginSettings state = ApplicationSettingsService.getInstance().getState();
+		if (!StringUtil.isEmptyOrSpaces(state.getVisualVmExecutable())) {
+			showJdkPopup(dataContext, component);
 			return;
 		}
 
+		final FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
+		descriptor.setHideIgnored(true);
+		descriptor.setTitle("Select VisualVM Executable");
+		FileChooserFactory.getInstance().newBuilder(descriptor).showSingle().whenComplete((path, error) -> {
+			if (path == null) {
+				return;
+			}
+			state.setVisualVmExecutable(FileUtil.toSystemIndependentName(path.toString()));
+			showJdkPopup(dataContext, component);
+		});
+	}
+
+	private void showJdkPopup(DataContext dataContext, Component component) {
 		DefaultActionGroup defaultActionGroup = new DefaultActionGroup();
 		defaultActionGroup.add(new MyDumbAwareAction("No JDK (system default)", null));
 //		defaultActionGroup.add(new FocusVisualVMAction("Focus VisualVM", null, null));
@@ -42,12 +61,11 @@ public class StartVisualVMMainToolbarAction extends MyDumbAwareAction {
 
 		homes.stream().sorted().forEach(o -> defaultActionGroup.add(new MyDumbAwareAction(o, o)));
 
-		ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup("Select JDK for --jdkhome VisualVM parameter", defaultActionGroup, e.getDataContext(), JBPopupFactory.ActionSelectionAid.ALPHA_NUMBERING, true, (Runnable) null, -1);
-		InputEvent inputEvent = e.getInputEvent();
-		if (inputEvent != null) {
-			popup.showInCenterOf(inputEvent.getComponent());
+		ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup("Select JDK for --jdkhome VisualVM parameter", defaultActionGroup, dataContext, JBPopupFactory.ActionSelectionAid.ALPHA_NUMBERING, true, (Runnable) null, -1);
+		if (component != null) {
+			popup.showInCenterOf(component);
 		} else {
-			popup.showInBestPositionFor(e.getDataContext());
+			popup.showInBestPositionFor(dataContext);
 
 		}
 	}
@@ -69,26 +87,6 @@ public class StartVisualVMMainToolbarAction extends MyDumbAwareAction {
 			}
 		}
 		return homes;
-	}
-
-	private boolean checkVisualVmExecutable() {
-		PluginSettings state = ApplicationSettingsService.getInstance().getState();
-		String visualVmPath = state.getVisualVmExecutable();
-		if (StringUtil.isEmptyOrSpaces(visualVmPath)) {
-			final FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
-			descriptor.setHideIgnored(true);
-
-			descriptor.setTitle("Select VisualVM Executable");
-			Project defaultProject = ProjectManager.getInstance().getDefaultProject();
-			VirtualFile virtualFile = IdeaFileChooser.chooseFile(descriptor, defaultProject, null);
-			if (virtualFile != null) {
-				String path = virtualFile.getPath();
-				state.setVisualVmExecutable(path);
-			} else {
-				return false;
-			}
-		}
-		return true;
 	}
 
 

@@ -3,12 +3,10 @@ package krasa.visualvm;
 import com.intellij.java.language.projectRoots.JavaSdkType;
 import consulo.fileChooser.FileChooserDescriptor;
 import consulo.fileChooser.FileChooserDescriptorFactory;
-import consulo.fileChooser.IdeaFileChooser;
-import consulo.project.Project;
-import consulo.project.ProjectManager;
+import consulo.fileChooser.FileChooserFactory;
 import consulo.util.lang.StringUtil;
-import consulo.virtualFileSystem.LocalFileSystem;
-import consulo.virtualFileSystem.VirtualFile;
+import consulo.util.io.FileUtil;
+import consulo.util.io.NioFiles;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -41,7 +39,7 @@ public class SettingsDialog
 
 			String text = jdkHome.getText();
 			Collection<String> paths = javaSdk.suggestHomePaths();
-			VirtualFile toSelect = null;
+			Path toSelect = null;
 			if(StringUtil.isEmptyOrSpaces(text))
 			{
 				for(String path : paths)
@@ -49,21 +47,22 @@ public class SettingsDialog
 					Path sdkPath = Path.of(path);
 					if(Files.exists(sdkPath))
 					{
-						toSelect = LocalFileSystem.getInstance().findFileByNioFile(sdkPath);
+						toSelect = sdkPath;
 					}
 				}
 			}
 			else
 			{
-				toSelect = LocalFileSystem.getInstance().findFileByPath(text);
+				toSelect = NioFiles.toPath(text);
 			}
 
-			Project defaultProject = ProjectManager.getInstance().getDefaultProject();
-			VirtualFile file = IdeaFileChooser.chooseFile(javaSdk.getHomeChooserDescriptor(), defaultProject, toSelect);
-			if(file != null)
+			FileChooserFactory.getInstance().newBuilder(javaSdk.getHomeChooserDescriptor()).toSelect(toSelect).showSingle().whenComplete((file, error) ->
 			{
-				jdkHome.setText(file.getPath());
-			}
+				if(file != null)
+				{
+					jdkHome.setText(FileUtil.toSystemIndependentName(file.toString()));
+				}
+			});
 		});
 		visualVmExecutable.getDocument().addDocumentListener(new DocumentListener()
 		{
@@ -108,16 +107,15 @@ public class SettingsDialog
 
 		descriptor.setTitle("Select VisualVM Executable");
 		String text = target.getText();
-		final VirtualFile toSelect = text == null || text.isEmpty() ? null
-				: LocalFileSystem.getInstance().findFileByPath(text);
+		final Path toSelect = text == null || text.isEmpty() ? null : NioFiles.toPath(text);
 
-		// 10.5 does not have #chooseFile
-		Project defaultProject = ProjectManager.getInstance().getDefaultProject();
-		VirtualFile[] virtualFile = IdeaFileChooser.chooseFiles(descriptor, defaultProject, toSelect);
-		if(virtualFile != null && virtualFile.length > 0)
+		FileChooserFactory.getInstance().newBuilder(descriptor).toSelect(toSelect).showSingle().whenComplete((file, error) ->
 		{
-			target.setText(virtualFile[0].getPath());
-		}
+			if(file != null)
+			{
+				target.setText(FileUtil.toSystemIndependentName(file.toString()));
+			}
+		});
 	}
 
 	private void setValidationMessage(String visualVmExecutable1)
